@@ -133,6 +133,24 @@ function addQuestion() {
     updateInterface();
 }
 
+function removeQuestion(num) {
+    //Collect data
+    collectData();
+
+    //Remove question
+    questions.splice(num, 1);
+    questionNum--;
+
+    //Update numbers
+    for (let i = 0; i < questionNum; i++) {
+        let question = questions[i];
+        question.setNum(i);
+    }
+
+    //Update interface
+    updateInterface();
+}
+
 function collectData() {
     for (let i = 0; i < questionNum; i++) {
         let question = questions[i];
@@ -166,6 +184,8 @@ function updateInterface() {
         interfaceHTML += `
         <div id='${question.getID()}Div'>
         <h3>Question ${question.getNum() + 1}</h3>
+        <input type='submit' value='Remove Question' onclick='removeQuestion(${i})' style='color: red;'>
+        <br><br>
         <label for='${question.getID()}Text'>Text</label>
         <input type='text' id='${question.getID()}Text' name='${question.getID()}Text'>`;
         //Loop through Option objects
