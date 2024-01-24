@@ -1,0 +1,20 @@
+- Add questions
+	- Add X
+	- Add options
+	- Modify values
+	- Remove
+	- Duplicate
+	- Change order
+	- Styling
+- Add options
+	- Add
+	- Modify values
+	- Remove
+	- Duplicate
+	- Change order
+	- Styling
+- Add output
+- Add preview
+- Add styling
+- Add storage
+- Add css
