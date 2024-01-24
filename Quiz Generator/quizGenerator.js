@@ -53,6 +53,7 @@ class Option{
     getQuestion() {
         return this.question;
     }
+
 }
 
 class Question{
@@ -102,6 +103,10 @@ class Question{
     //Add functions
 
     addOption() {
+        //Collect data
+        collectData();
+
+        //Add option
         let option = new Option(this.optionNum, this);
         this.options.push(option);
         this.optionNum++;
@@ -118,14 +123,44 @@ var questionNum = 0;
 //Global functions
 
 function addQuestion() {
+    //Collect data
+    collectData();
+
+    //Add question
     let q = new Question(questionNum);
     questions.push(q);
     questionNum++;
     updateInterface();
 }
 
+function collectData() {
+    for (let i = 0; i < questionNum; i++) {
+        let question = questions[i];
+        question.setText(document.getElementById(`${question.getID()}Text`).value);
+        for (let j = 0; j < question.getOptionNum(); j++) {
+            let option = question.getOption(j);
+            option.setText(document.getElementById(`${option.getID()}Text`).value);
+            option.setValue(document.getElementById(`${option.getID()}Value`).value);
+        }
+    }
+}
+
+function replaceData() {
+    for (let i = 0; i < questionNum; i++) {
+        let question = questions[i];
+        document.getElementById(`${question.getID()}Text`).value = question.getText();
+        for (let j = 0; j < question.getOptionNum(); j++) {
+            let option = question.getOption(j);
+            document.getElementById(`${option.getID()}Text`).value = option.getText();
+            document.getElementById(`${option.getID()}Value`).value = option.getValue();
+        }
+    }
+}
+
 function updateInterface() {
     let interfaceHTML = ``;
+
+    //Loop through Question objects
     for (let i = 0; i < questionNum; i++) {
         let question = questions[i];
         interfaceHTML += `
@@ -133,6 +168,7 @@ function updateInterface() {
         <h3>Question ${question.getNum() + 1}</h3>
         <label for='${question.getID()}Text'>Text</label>
         <input type='text' id='${question.getID()}Text' name='${question.getID()}Text'>`;
+        //Loop through Option objects
         for (let j = 0; j < question.getOptionNum(); j++) {
             let option = question.getOption(j);
             interfaceHTML += `
@@ -142,17 +178,20 @@ function updateInterface() {
             <label for='${option.getID()}Text'>Text</label>
             <input type='text' id='${option.getID()}Text' name='${option.getID()}Text'>
             <label for='${option.getID()}Value'>Value</label>
-            <input type='text' id='${option.getID()}Value' name='${option.getID()}Value'>
+            <input type='number' id='${option.getID()}Value' name='${option.getID()}Value'>
             </div>`;
         }
+        //Add buttons for questions
         interfaceHTML += `
         <br><br>
-        <input type='submit' value='Add Option' onclick='questions[${question.getNum()}].addOption()'>
+        <input type='submit' value='Add Option' onclick='questions[${question.getNum()}].addOption()' style='margin-left: 25px;'>
         </div>
         <br>`;
     }
+    //Add buttons for options
     interfaceHTML += `\n<input type="submit" value="Add Question" onclick="addQuestion()"/>`;
     document.getElementById("interface").innerHTML = interfaceHTML;
+    replaceData();
 }
 
 function displayData() {

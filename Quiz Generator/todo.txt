@@ -1,20 +1,20 @@
 - Add questions
-	- Add X
-	- Add options X
-	- Modify values
-	- Remove
-	- Duplicate
-	- Change order
-	- Styling
+	- Add (X)
+	- Add options (X)
+	- Modify values (X)
+	- Remove ( )
+	- Duplicate ( )
+	- Change order ( )
+	- Styling ( )
 - Add options
-	- Add X
-	- Modify values
-	- Remove
-	- Duplicate
-	- Change order
-	- Styling
-- Add output
-- Add preview
-- Add styling
-- Add storage
-- Add css
+	- Add (X)
+	- Modify values (X)
+	- Remove ( )
+	- Duplicate ( )
+	- Change order ( )
+	- Styling ( )
+- Add output ( )
+- Add preview ( )
+- Add styling ( )
+- Add storage ( )
+- Add css ( )
