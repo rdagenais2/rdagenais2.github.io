@@ -20,16 +20,16 @@ class Option{
 
     setNum(num) {
         this.num = num;
-        setID();
+        this.setID();
     }
 
     setQuestion(question) {
         this.question = question;
-        setID();
+        this.setID();
     }
 
     setID() {
-        this.id = `${this.question.getID()}option${num}`;
+        this.id = `${this.question.getID()}option${this.num}`;
     }
 
     //Get functions
@@ -110,6 +110,24 @@ class Question{
         let option = new Option(this.optionNum, this);
         this.options.push(option);
         this.optionNum++;
+        updateInterface();
+    }
+
+    removeOption(num) {
+        //Collect data
+        collectData()
+
+        //Remove option
+        this.options.splice(num, 1);
+        this.optionNum--;
+
+        //Update numbers
+        for (let i = 0; i < this.optionNum; i++) {
+            let option = this.options[i];
+            option.setNum(i);
+        }
+
+        //Update interface
         updateInterface();
     }
 
@@ -195,6 +213,7 @@ function updateInterface() {
             <br>
             <div id ='${option.getID()}Div' style='margin-left: 25px;'>
             <h4>Option ${option.getNum() + 1}</h4>
+            <input type='submit' value='Remove Option' onclick='questions[${question.getNum()}].removeOption(${j})' style='color: red;'>
             <label for='${option.getID()}Text'>Text</label>
             <input type='text' id='${option.getID()}Text' name='${option.getID()}Text'>
             <label for='${option.getID()}Value'>Value</label>
