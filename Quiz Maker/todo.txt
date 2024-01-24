@@ -1,13 +1,13 @@
 - Add questions
 	- Add X
-	- Add options
+	- Add options X
 	- Modify values
 	- Remove
 	- Duplicate
 	- Change order
 	- Styling
 - Add options
-	- Add
+	- Add X
 	- Modify values
 	- Remove
 	- Duplicate

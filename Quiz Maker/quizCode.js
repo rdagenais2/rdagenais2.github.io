@@ -1,10 +1,12 @@
+// Classes
+
 class Option{
     constructor(num, question){
         this.text = "";
         this.value = 0;
         this.num = num;
-        this.id = `option${num}`;
         this.question = question;
+        this.id = `${this.question.getID()}option${num}`;
     }
     //Set functions
 
@@ -18,14 +20,39 @@ class Option{
 
     setNum(num) {
         this.num = num;
-        this.id = `option${num}`;
+        setID();
     }
 
     setQuestion(question) {
         this.question = question;
+        setID();
+    }
+
+    setID() {
+        this.id = `${this.question.getID()}option${num}`;
     }
 
     //Get functions
+
+    getText() {
+        return this.text;
+    }
+
+    getValue() {
+        return this.value;
+    }
+
+    getNum() {
+        return this.num;
+    }
+
+    getID() {
+        return this.id;
+    }
+
+    getQuestion() {
+        return this.question;
+    }
 }
 
 class Question{
@@ -56,7 +83,7 @@ class Question{
 
     getOption(optionNum) {
         if (optionNum < this.optionNum) {
-            return options[optionNum];
+            return this.options[optionNum];
         }
     }
 
@@ -75,16 +102,20 @@ class Question{
     //Add functions
 
     addOption() {
-        option = new Option();
+        let option = new Option(this.optionNum, this);
         this.options.push(option);
+        this.optionNum++;
+        updateInterface();
     }
 
 }
 
-
+//Global variables
 
 const questions = [];
 var questionNum = 0;
+
+//Global functions
 
 function addQuestion() {
     let q = new Question(questionNum);
@@ -98,17 +129,27 @@ function updateInterface() {
     for (let i = 0; i < questionNum; i++) {
         let question = questions[i];
         interfaceHTML += `
-        <div id='${question.getID()}div'>
+        <div id='${question.getID()}Div'>
         <h3>Question ${question.getNum() + 1}</h3>
-        <label for='${question.getID()}'text>Text</label>
-        <input type='text' id='${question.getID()}text' name='${question.getID()}text'>`;
+        <label for='${question.getID()}Text'>Text</label>
+        <input type='text' id='${question.getID()}Text' name='${question.getID()}Text'>`;
         for (let j = 0; j < question.getOptionNum(); j++) {
             let option = question.getOption(j);
             interfaceHTML += `
             <br>
-            <div id ='${option.getID()}div'>
-            <h4>Option ${option.getNum(}`
+            <div id ='${option.getID()}Div' style='margin-left: 25px;'>
+            <h4>Option ${option.getNum() + 1}</h4>
+            <label for='${option.getID()}Text'>Text</label>
+            <input type='text' id='${option.getID()}Text' name='${option.getID()}Text'>
+            <label for='${option.getID()}Value'>Value</label>
+            <input type='text' id='${option.getID()}Value' name='${option.getID()}Value'>
+            </div>`;
         }
+        interfaceHTML += `
+        <br><br>
+        <input type='submit' value='Add Option' onclick='questions[${question.getNum()}].addOption()'>
+        </div>
+        <br>`;
     }
     interfaceHTML += `\n<input type="submit" value="Add Question" onclick="addQuestion()"/>`;
     document.getElementById("interface").innerHTML = interfaceHTML;
