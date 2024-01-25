@@ -436,6 +436,10 @@ function outputCode() {
     document.getElementById('outputText').innerHTML = output;
 }
 
+function showDevtools() {
+    document.getElementById('devtools').style = 'visibility: visible;';
+}
+
 function displayData() {
     console.log(questions);
 }
