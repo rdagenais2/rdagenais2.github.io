@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz Generator</title>
+    <script src="quizGenerator.js"></script>
+</head>
+<body>
+    <div id="menu">
+        <a href="../index.html">
+            <button type="button">Return home</button>
+        </a>
+    </div>
+    <div id="header">
+        <h1>Quiz Generator</h1>
+    </div>
+    <div id="interface">
+        <input type="submit" value="Add Question" onclick="addQuestion()" />
+        <br /><br />
+        <input type='submit' value='Add Result' onclick='addResult()' />
+    </div>
+    <br />
+    <div id="outputDiv">
+        <input type="submit" value="Output Code" onclick="outputCode()" />
+        <xmp id="outputText">hello</xmp>
+    </div>
+    <div id="devtools">
+        <input type="submit" value="Show Data" onclick="displayData()" />
+        <input type="submit" value="Autofill" onclick="autofill()" />
+    </div>
+</body>
+</html>
