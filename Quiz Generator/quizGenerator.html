@@ -3,6 +3,7 @@
 <head>
     <title>Quiz Generator</title>
     <script src="quizGenerator.js"></script>
+    <link rel="stylesheet" href="quizGenerator.css">
 </head>
 <body>
     <div id="menu">
@@ -21,9 +22,9 @@
     <br />
     <div id="outputDiv">
         <input type="submit" value="Output Code" onclick="outputCode()" />
-        <xmp id="outputText">hello</xmp>
+        <xmp id="outputText"></xmp>
     </div>
-    <div id="devtools">
+    <div id="devtools" style="visibility: hidden;">
         <input type="submit" value="Show Data" onclick="displayData()" />
         <input type="submit" value="Autofill" onclick="autofill()" />
     </div>
