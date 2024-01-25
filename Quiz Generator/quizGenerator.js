@@ -1,9 +1,9 @@
 // Classes
 
 class Option{
-    constructor(num, question){
-        this.text = "";
-        this.value = 0;
+    constructor(num, question, text="", value=0){
+        this.text = text;
+        this.value = value;
         this.num = num;
         this.question = question;
         this.id = `${this.question.getID()}option${num}`;
@@ -53,12 +53,12 @@ class Option{
 }
 
 class Question{
-    constructor(num){
-        this.text = "";
-        this.options = [];
+    constructor(num, text = "", options = [], optionNum = 0){
+        this.text = text;
+        this.options = options;
         this.num = num;
         this.id = `question${num}`;
-        this.optionNum = 0;
+        this.optionNum = optionNum;
     }
 
     //Set funtions
@@ -132,11 +132,11 @@ class Question{
 }
 
 class Result {
-    constructor(num, lowerVal) {
+    constructor(num, lowerVal, upperVal=lowerVal+1, text="", detail="") {
         this.text = "";
         this.detail = "";
         this.lowerVal = lowerVal;
-        this.upperVal = lowerVal + 1;
+        this.upperVal = upperVal;
         this.num = num;
         this.id = `result${num}`;
     }
@@ -384,17 +384,104 @@ function updateInterface() {
 }
 
 function outputCode() {
-    let output = `<!DOCTYPE html>
-    `;
+    let output = `
+    <script>
+    const scores = [];
+    const questionAmt = ${questionNum};
+    function setScore(value, question){
+        scores[question] = value;
+    }
+    function finalScore(){
+        let score = 0;
+        for(let i = 0; i < questionAmt; i++){
+            score += scores[i];
+        }`;
+    for (let i = 0; i < resultNum; i++) {
+        let result = results[i];
+        output += `
+        if(score >= ${result.getLowerVal()} && score <= ${result.getUpperVal()}){
+            document.getElementById('resultHead').innerHTML = '${result.getText()}';
+            document.getElementById('resultBody').innerHTML = '${result.getDetail()}';
+        }`;
+        if (i + 1 != resultNum) {
+            output += "else";
+        }
+    }
+    output+=`
+    }
+    </script>
+    <div id='quizBody'>`;
     for (let i = 0; i < questionNum; i++) {
         let question = questions[i];
         output += `
         <h1>${question.getText()}<h1>
         <br>`;
+        for (let j = 0; j < question.getOptionNum(); j++) {
+            let option = question.getOption(j);
+            output += `
+            <input type='radio' id='${option.getID()}' name='${question.getID()}' value='option${option.getNum()}' onclick='setScore(${option.getValue()}, ${question.getNum()})'>
+            <label for='${option.getID()}'>${option.getText()}</label>
+            <br>`;
+        }
+        
     }
+    output += `
+    <br><br>
+    <input type='submit' value='Get Results' onclick='finalScore()'>
+    </div>
+    <div id='results'>
+    <h1 id='resultHead'></h1>
+    <p id='resultBody'></p>
+    </div>`;
+    document.getElementById('outputText').innerHTML = output;
 }
 
 function displayData() {
     console.log(questions);
+}
+
+function autofill() {
+    addQuestion();
+    addQuestion();
+    addQuestion();
+    
+    questions[0].setText("Question 1");
+    questions[1].setText("Question 2");
+    questions[2].setText("Question 3");
+
+    replaceData();
+    for (let i = 0; i < 3; i++) {
+        questions[i].addOption();
+        questions[i].addOption();
+        questions[i].addOption();
+
+        questions[i].getOption(0).setText("Positive");
+        questions[i].getOption(0).setValue(1);
+        questions[i].getOption(1).setText("Neutral");
+        questions[i].getOption(1).setValue(0);
+        questions[i].getOption(2).setText("Negative");
+        questions[i].getOption(2).setValue(-1);
+
+        replaceData();
+    }
+    addResult();
+    addResult();
+    addResult();
+
+    results[0].setText("Negative");
+    results[0].setDetail("You got a negative score");
+    results[0].setLowerVal(-3);
+    results[0].setUpperVal(-1);
+    results[1].setText("Neutral");
+    results[1].setDetail("You got a neutral score");
+    results[1].setLowerVal(0);
+    results[1].setUpperVal(0);
+    results[2].setText("Positive");
+    results[2].setDetail("You got a positive score");
+    results[2].setLowerVal(1);
+    results[2].setUpperVal(3);
+
+    replaceData();
+
 }
 

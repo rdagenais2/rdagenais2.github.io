@@ -20,7 +20,7 @@
 	- Duplicate ( )
 	- Change order ( )
 	- Styling ( )
-- Add output ( )
+- Add output (X)
 - Add preview ( )
 - Add styling ( )
 - Add storage ( )
