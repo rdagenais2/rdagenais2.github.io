@@ -52,7 +52,7 @@ class Question{
     }
 
     getText() {
-        return this.textInput.getAttribute('value');
+        return this.textInput.value;
     }
 
     getOption(i) {
@@ -120,11 +120,11 @@ class Option {
     }
 
     getValue() {
-        return this.valueInput.getAttribute('value');
+        return this.valueInput.value;
     }
 
     getText() {
-        return this.textInput.getAttribute('value');
+        return this.textInput.value;
     }
 
     //set
@@ -196,15 +196,15 @@ class Result {
     //get
 
     getText() {
-        return this.textInput.getAttribute('value');
+        return this.textInput.value;
     }
 
     getLower() {
-        return this.lowerInput.getAttribute('value');
+        return this.lowerInput.value;
     }
 
     getUpper() {
-        return this.upperInput.getAttribute('value');
+        return this.upperInput.value;
     }
 
     getDetail() {
