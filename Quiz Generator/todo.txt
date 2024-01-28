@@ -9,7 +9,7 @@
 - Add options
 	- Add (X)
 	- Modify values (X)
-	- Remove ( )
+	- Remove (X)
 	- Duplicate ( )
 	- Change order ( )
 	- Styling ( )
