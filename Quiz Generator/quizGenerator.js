@@ -93,65 +93,60 @@ class Option {
 }
 
 class Result {
-    constructor(num, lowerVal, upperVal=lowerVal+1, text="", detail="") {
-        this.text = "";
-        this.detail = "";
-        this.lowerVal = lowerVal;
-        this.upperVal = upperVal;
+    constructor(num) {
         this.num = num;
-        this.id = `result${num}`;
+        this.id = `result${this.num}`;
+        var resultDiv = document.getElementById('resultDiv');
+        //Create elements
+        this.div = document.createElement('div');
+        this.header = document.createElement('h3');
+        this.form = document.createElement('form');
+        this.textLabel = document.createElement('label');
+        this.lowerLabel = document.createElement('label');
+        this.upperLabel = document.createElement('label');
+        this.detailLabel = document.createElement('label');
+        this.textInput = document.createElement('input');
+        this.lowerInput = document.createElement('input');
+        this.upperInput = document.createElement('input');
+        this.detailInput = document.createElement('textarea');
+        //Set attributes
+        this.div.setAttribute('id', `${this.id}Div`);
+        this.header.innerHTML = `Result ${this.num + 1}`;
+        this.textLabel.setAttribute('for', `${this.id}Text`);
+        this.textLabel.innerHTML = 'Text';
+        this.textInput.setAttribute('type', 'text');
+        this.textInput.setAttribute('id', `${this.id}Text`);
+        this.textInput.setAttribute('name', `${this.id}Text`);
+        this.lowerLabel.setAttribute('for', `${this.id}Lower`);
+        this.lowerLabel.innerHTML = 'Lower Value';
+        this.lowerInput.setAttribute('type', 'number');
+        this.lowerInput.setAttribute('id', `${this.id}Lower`);
+        this.lowerInput.setAttribute('name', `${this.id}Lower`);
+        this.upperLabel.setAttribute('for', `${this.id}Upper`);
+        this.upperLabel.innerHTML = 'Upper Value';
+        this.upperInput.setAttribute('type', 'number');
+        this.upperInput.setAttribute('id', `${this.id}Upper`);
+        this.upperInput.setAttribute('name', `${this.id}Upper`);
+        this.detailLabel.setAttribute('for', `${this.id}Detail`);
+        this.detailLabel.innerHTML = 'Detail';
+        this.detailInput.setAttribute('id', `${this.id}Detail`);
+        this.detailInput.setAttribute('name', `${this.id}Detail`);
+        this.detailInput.setAttribute('rows', '5');
+        this.detailInput.setAttribute('cols', '50');
+        //Append children
+        resultDiv.appendChild(this.div);
+        this.div.appendChild(this.header);
+        this.div.appendChild(this.form);
+        this.form.appendChild(this.textLabel);
+        this.form.appendChild(this.textInput);
+        this.form.appendChild(this.lowerLabel);
+        this.form.appendChild(this.lowerInput);
+        this.form.appendChild(this.upperLabel);
+        this.form.appendChild(this.upperInput);
+        this.form.appendChild(this.detailLabel);
+        this.form.appendChild(this.detailInput);
     }
-
-    //Set functions
-
-    setText(text) {
-        this.text = text;
-    }
-
-    setDetail(detail) {
-        this.detail = detail;
-    }
-
-    setLowerVal(lowerVal) {
-        this.lowerVal = lowerVal;
-    }
-
-    setUpperVal(upperVal) {
-        this.upperVal = upperVal;
-    }
-
-    setNum(num) {
-        this.num = num;
-        this.id = `result${num}`;
-    }
-
-
-    //Get functions
-
-    getText() {
-        return this.text;
-    }
-
-    getDetail() {
-        return this.detail;
-    }
-
-    getLowerVal() {
-        return this.lowerVal;
-    }
-
-    getUpperVal() {
-        return this.upperVal;
-    }
-
-    getNum() {
-        return this.num;
-    }
-
-    getID() {
-        return this.id;
-    }
-
+    
 }
 
 //Global variables
@@ -171,6 +166,7 @@ function removeQuestion(num) {
 }
 
 function addResult() {
+    results.push(new Result(resultNum++));
 }
 
 function removeResult(num) {
