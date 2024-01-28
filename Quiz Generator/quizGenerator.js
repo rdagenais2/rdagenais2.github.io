@@ -47,6 +47,24 @@ class Question{
         return this.id;
     }
 
+    getOptionNum() {
+        return this.optionNum;
+    }
+
+    getText() {
+        return this.textInput.getAttribute('value');
+    }
+
+    getOption(i) {
+        return this.options[i];
+    }
+
+    //set
+
+    setText(text) {
+        this.textInput.setAttribute('value', text);
+    }
+
     //add
 
     addOption() {
@@ -89,6 +107,34 @@ class Option {
         this.form.appendChild(this.textInput);
         this.form.appendChild(this.valueLabel);
         this.form.appendChild(this.valueInput);
+    }
+
+    //get
+
+    getId() {
+        return this.id;
+    }
+
+    getNum() {
+        return this.num;
+    }
+
+    getValue() {
+        return this.valueInput.getAttribute('value');
+    }
+
+    getText() {
+        return this.textInput.getAttribute('value');
+    }
+
+    //set
+
+    setText(text) {
+        this.textInput.setAttribute('value', text);
+    }
+
+    setValue(value) {
+        this.valueInput.setAttribute('value', value);
     }
 }
 
@@ -146,6 +192,42 @@ class Result {
         this.form.appendChild(this.detailLabel);
         this.form.appendChild(this.detailInput);
     }
+
+    //get
+
+    getText() {
+        return this.textInput.getAttribute('value');
+    }
+
+    getLower() {
+        return this.lowerInput.getAttribute('value');
+    }
+
+    getUpper() {
+        return this.upperInput.getAttribute('value');
+    }
+
+    getDetail() {
+        return this.detailInput.innerHTML;
+    }
+
+    //set
+
+    setText(text) {
+        this.textInput.setAttribute('value', text);
+    }
+
+    setLower(lower) {
+        this.lowerInput.setAttribute('value', lower);
+    }
+
+    setUpper(upper) {
+        this.upperInput.setAttribute('value', upper);
+    }
+
+    setDetail(detail) {
+        this.detailInput.innerHTML = detail;
+    }
     
 }
 
@@ -188,7 +270,7 @@ function outputCode() {
     for (let i = 0; i < resultNum; i++) {
         let result = results[i];
         output += `
-        if(score >= ${result.getLowerVal()} && score <= ${result.getUpperVal()}){
+        if(score >= ${result.getLower()} && score <= ${result.getUpper()}){
             document.getElementById('resultHead').innerHTML = '${result.getText()}';
             document.getElementById('resultBody').innerHTML = '${result.getDetail()}';
         }`;
@@ -203,19 +285,16 @@ function outputCode() {
     for (let i = 0; i < questionNum; i++) {
         let question = questions[i];
         output += `
-        <h1>${question.getText()}<h1>
-        <br>`;
+        <h1>${question.getText()}<h1>`;
         for (let j = 0; j < question.getOptionNum(); j++) {
             let option = question.getOption(j);
             output += `
-            <input type='radio' id='${option.getID()}' name='${question.getID()}' value='option${option.getNum()}' onclick='setScore(${option.getValue()}, ${question.getNum()})'>
-            <label for='${option.getID()}'>${option.getText()}</label>
-            <br>`;
+            <input type='radio' id='${option.getId()}' name='${question.getId()}' value='option${option.getNum()}' onclick='setScore(${option.getValue()}, ${question.getNum()})'>
+            <label for='${option.getId()}'>${option.getText()}</label>`;
         }
         
     }
     output += `
-    <br><br>
     <input type='submit' value='Get Results' onclick='finalScore()'>
     </div>
     <div id='results'>
@@ -242,7 +321,6 @@ function autofill() {
     questions[1].setText("Question 2");
     questions[2].setText("Question 3");
 
-    replaceData();
     for (let i = 0; i < 3; i++) {
         questions[i].addOption();
         questions[i].addOption();
@@ -254,8 +332,6 @@ function autofill() {
         questions[i].getOption(1).setValue(0);
         questions[i].getOption(2).setText("Negative");
         questions[i].getOption(2).setValue(-1);
-
-        replaceData();
     }
     addResult();
     addResult();
@@ -263,18 +339,15 @@ function autofill() {
 
     results[0].setText("Negative");
     results[0].setDetail("You got a negative score");
-    results[0].setLowerVal(-3);
-    results[0].setUpperVal(-1);
+    results[0].setLower(-3);
+    results[0].setUpper(-1);
     results[1].setText("Neutral");
     results[1].setDetail("You got a neutral score");
-    results[1].setLowerVal(0);
-    results[1].setUpperVal(0);
+    results[1].setLower(0);
+    results[1].setUpper(0);
     results[2].setText("Positive");
     results[2].setDetail("You got a positive score");
-    results[2].setLowerVal(1);
-    results[2].setUpperVal(3);
-
-    replaceData();
-
+    results[2].setLower(1);
+    results[2].setUpper(3);
 }
 
