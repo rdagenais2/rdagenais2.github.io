@@ -285,14 +285,16 @@ function outputCode() {
     for (let i = 0; i < questionNum; i++) {
         let question = questions[i];
         output += `
-        <h1>${question.getText()}<h1>`;
+        <h1>${question.getText()}<h1>
+        <form>`;
         for (let j = 0; j < question.getOptionNum(); j++) {
             let option = question.getOption(j);
             output += `
             <input type='radio' id='${option.getId()}' name='${question.getId()}' value='option${option.getNum()}' onclick='setScore(${option.getValue()}, ${question.getNum()})'>
             <label for='${option.getId()}'>${option.getText()}</label>`;
         }
-        
+        output += `
+        </form>`
     }
     output += `
     <input type='submit' value='Get Results' onclick='finalScore()'>
@@ -302,6 +304,13 @@ function outputCode() {
     <p id='resultBody'></p>
     </div>`;
     document.getElementById('outputText').innerHTML = output;
+    var iframe = document.getElementById('preview');
+    iframe.contentWindow.document.open();
+    iframe.contentWindow.document.write(output);
+    iframe.contentWindow.document.close();
+    iframe.setAttribute('width', '1000');
+    iframe.setAttribute('height', '500');
+    iframe.setAttribute('style', 'visibility: visible;');
 }
 
 function showDevtools() {
