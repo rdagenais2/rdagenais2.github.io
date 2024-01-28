@@ -2,7 +2,7 @@
 	- Add (X)
 	- Add options (X)
 	- Modify values (X)
-	- Remove ( )
+	- Remove (X)
 	- Duplicate ( )
 	- Change order ( )
 	- Styling ( )
