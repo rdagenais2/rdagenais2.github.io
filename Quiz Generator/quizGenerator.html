@@ -5,7 +5,7 @@
     <script src="quizGenerator.js"></script>
     <link rel="stylesheet" href="quizGenerator.css">
 </head>
-<body>
+<body onload="showDevtools()">
     <div id="menu">
         <a href="../index.html">
             <button type="button">Return home</button>
@@ -15,15 +15,16 @@
         <h1>Quiz Generator</h1>
     </div>
     <div id="interface">
+        <div id="questionDiv"></div>
         <input type="submit" value="Add Question" onclick="addQuestion()" />
-        <br /><br />
+        <div id="resultDiv"></div>
         <input type='submit' value='Add Result' onclick='addResult()' />
     </div>
-    <br />
     <div id="outputDiv">
         <input type="submit" value="Output Code" onclick="outputCode()" />
         <xmp id="outputText"></xmp>
     </div>
+    <iframe id="preview" src="" width="0" height="0" style="visibility: hidden;"></iframe>
     <div id="devtools" style="visibility: hidden;">
         <input type="submit" value="Show Data" onclick="displayData()" />
         <input type="submit" value="Autofill" onclick="autofill()" />
