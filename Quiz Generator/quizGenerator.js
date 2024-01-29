@@ -1,5 +1,11 @@
 // Classes
 
+class QuizElement{
+    constructor(num) {
+
+    }
+}
+
 class Question{
     constructor(num) {
         this.num = num;
@@ -237,11 +243,19 @@ class Option {
 class Result {
     constructor(num) {
         this.num = num;
-        this.id = `result${this.num}`;
         var resultDiv = document.getElementById('resultDiv');
         //Create elements
+        this.createElements();
+        //Set attributes
+        this.setAttributes();
+        //Append children
+        this.appendChildren(resultDiv);
+    }
+
+    createElements() {
         this.div = document.createElement('div');
         this.header = document.createElement('h3');
+        this.removeButton = document.createElement('input');
         this.form = document.createElement('form');
         this.textLabel = document.createElement('label');
         this.lowerLabel = document.createElement('label');
@@ -251,33 +265,46 @@ class Result {
         this.lowerInput = document.createElement('input');
         this.upperInput = document.createElement('input');
         this.detailInput = document.createElement('textarea');
-        //Set attributes
-        this.div.setAttribute('id', `${this.id}Div`);
+    }
+
+    setAttributes() {
+        this.setIds();
         this.header.innerHTML = `Result ${this.num + 1}`;
-        this.textLabel.setAttribute('for', `${this.id}Text`);
+        this.removeButton.setAttribute('type', 'button');
+        this.removeButton.setAttribute('onclick', `removeResult(${this.num})`);
+        this.removeButton.setAttribute('value', 'Remove Result');
         this.textLabel.innerHTML = 'Text';
         this.textInput.setAttribute('type', 'text');
+        this.lowerLabel.innerHTML = 'Lower Value';
+        this.lowerInput.setAttribute('type', 'number');
+        this.upperLabel.innerHTML = 'Upper Value';
+        this.upperInput.setAttribute('type', 'number');
+        this.detailLabel.innerHTML = 'Detail';
+        this.detailInput.setAttribute('rows', '5');
+        this.detailInput.setAttribute('cols', '50');
+    }
+
+    setIds() {
+        this.id = `result${this.num}`;
+        this.div.setAttribute('id', `${this.id}Div`);
+        this.textLabel.setAttribute('for', `${this.id}Text`);
         this.textInput.setAttribute('id', `${this.id}Text`);
         this.textInput.setAttribute('name', `${this.id}Text`);
         this.lowerLabel.setAttribute('for', `${this.id}Lower`);
-        this.lowerLabel.innerHTML = 'Lower Value';
-        this.lowerInput.setAttribute('type', 'number');
         this.lowerInput.setAttribute('id', `${this.id}Lower`);
         this.lowerInput.setAttribute('name', `${this.id}Lower`);
         this.upperLabel.setAttribute('for', `${this.id}Upper`);
-        this.upperLabel.innerHTML = 'Upper Value';
-        this.upperInput.setAttribute('type', 'number');
         this.upperInput.setAttribute('id', `${this.id}Upper`);
         this.upperInput.setAttribute('name', `${this.id}Upper`);
         this.detailLabel.setAttribute('for', `${this.id}Detail`);
-        this.detailLabel.innerHTML = 'Detail';
         this.detailInput.setAttribute('id', `${this.id}Detail`);
         this.detailInput.setAttribute('name', `${this.id}Detail`);
-        this.detailInput.setAttribute('rows', '5');
-        this.detailInput.setAttribute('cols', '50');
-        //Append children
+    }
+
+    appendChildren(resultDiv) {
         resultDiv.appendChild(this.div);
         this.div.appendChild(this.header);
+        this.div.appendChild(this.removeButton);
         this.div.appendChild(this.form);
         this.form.appendChild(this.textLabel);
         this.form.appendChild(this.textInput);
@@ -324,6 +351,25 @@ class Result {
     setDetail(detail) {
         this.detailInput.innerHTML = detail;
     }
+
+    setNum(num) {
+        this.num = num;
+        this.updateElementsNum();
+    }
+    //remove
+
+    remove() {
+        this.div.remove();
+        results.splice(this.num, 1);
+    }
+
+    //update
+
+    updateElementsNum() {
+        this.setIds();
+        this.header.innerHTML = `Result ${this.num + 1}`;
+        this.removeButton.setAttribute('onclick', `removeResult(${this.num})`);
+    }
     
 }
 
@@ -354,6 +400,12 @@ function addResult() {
 }
 
 function removeResult(num) {
+    results[num].remove();
+    resultNum--;
+
+    for (let i = num; i < resultNum; i++) {
+        results[i].setNum(i);
+    }
 }
 
 function outputCode() {
