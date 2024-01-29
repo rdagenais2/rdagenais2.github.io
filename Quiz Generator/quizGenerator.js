@@ -1,15 +1,24 @@
 // Classes
 
 class QuizElement {
-    constructor(num, type) {
+    constructor(num, type, parentObject = null) {
         this._num = num;
         this._type = type;
-        this._mainDiv = document.getElementById(`${type}Div`);
+        this._parent = parentObject;
+        if (this._parent != null) {
+            this._mainDiv = document.getElementById(`${this._parent.id}${this._type.charAt(0).toUpperCase() + this._type.slice(1)}Div`);
+        } else {
+            this._mainDiv = document.getElementById(`${type}Div`);
+        }
     }
 
     createElements() {
         this._div = document.createElement('div');
-        this._header = document.createElement('h3');
+        if (this._parent != null) {
+            this._header = document.createElement('h4');
+        } else {
+            this._header = document.createElement('h3');
+        }
         this._removeButton = document.createElement('input');
         this._form = document.createElement('form');
         this._textLabel = document.createElement('label');
@@ -26,7 +35,7 @@ class QuizElement {
     }
 
     setIds() {
-        this._id = `${this._type}${this._num}`;
+        this._id = this.id;
         this._div.setAttribute('id', `${this._id}Div`);
         this._textLabel.setAttribute('for', `${this._id}Text`);
         this._textInput.setAttribute('id', `${this._id}Text`);
@@ -51,10 +60,17 @@ class QuizElement {
         return this._type;
     }
     get id() {
-        return this._id;
+        if (this._parent != null) {
+            return `${this._parent.id}${this._type}${this._num}`
+        } else {
+            return `${this._type}${this._num}`;
+        }
     }
     get text() {
         return this._textInput.value;
+    }
+    get parent() {
+        return this._parent;
     }
 
     //setters
@@ -63,7 +79,7 @@ class QuizElement {
         this._num = num;
         this._header.innerHTML = `${this._type.charAt(0).toUpperCase() + this._type.slice(1)} ${this._num + 1}`;
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
-        this._id = this._type + this._num;
+        this._id = this.id;
         this._div.setAttribute('id', `${this._id}Div`);
         this._textLabel.setAttribute('for', `${this._id}Text`);
         this._textInput.setAttribute('id', `${this._id}Text`);
@@ -71,6 +87,13 @@ class QuizElement {
     }
     set text(text) {
         this._textInput.setAttribute('value', text);
+    }
+
+    //update
+    parentUpdate() {
+        if (this._parent != null) {
+            this.num = this._num;
+        }
     }
 
     //remove
@@ -101,7 +124,7 @@ class Question extends QuizElement{
         super.setAttributes();
         this._optionButton.setAttribute('type', 'button');
         this._optionButton.setAttribute('value', 'Add Option');
-        this._optionButton.setAttribute('onclick', `questions[${this.num}].addOption()`);
+        this._optionButton.setAttribute('onclick', `questions[${this._num}].addOption()`);
     }
 
     setIds() {
@@ -117,6 +140,9 @@ class Question extends QuizElement{
 
     //get
 
+    get num() {
+        return super.num;
+    }
     get optionNum() {
         return this._optionNum;
     }
@@ -128,8 +154,11 @@ class Question extends QuizElement{
 
     set num(num) {
         super.num = num;
-        this._optionButton.setAttribute('onclick', `questions[${this.num}].addOption()`);
+        this._optionButton.setAttribute('onclick', `questions[${super.num}].addOption()`);
         this._optionDiv.setAttribute('id', `${this._id}OptionDiv`);
+        for (let i = 0; i < this._optionNum; i++) {
+            this._options[i].num = i;
+        }
     }
 
     //add
@@ -146,249 +175,159 @@ class Question extends QuizElement{
         this._optionNum--;
 
         for (let j = i; j < this._optionNum; j++) {
-            this._options[j].setNum(j);
+            this._options[j].num = j;
         }
     }
-
-    //update
 }
 
-class Option {
+class Option extends QuizElement {
     constructor(num, question) {
-        this.num = num;
-        this.question = question;
-        var optionDiv = document.getElementById(`${this.question.getId()}OptionDiv`);
-        //Create elements
+        super(num, 'option', question);
         this.createElements();
-        //Set attributes
         this.setAttributes();
-        //Append children
-        this.appendChildren(optionDiv);
+        this.appendChildren();
     }
 
     createElements() {
-        this.div = document.createElement('div');
-        this.header = document.createElement('h4');
-        this.removeButton = document.createElement('input');
-        this.form = document.createElement('form');
-        this.textLabel = document.createElement('label');
-        this.valueLabel = document.createElement('label');
-        this.textInput = document.createElement('input');
-        this.valueInput = document.createElement('input');
+        super.createElements();
+        this._valueLabel = document.createElement('label');
+        this._valueInput = document.createElement('input');
     }
 
     setAttributes() {
+        super.setAttributes();
         this.setIds();
-        this.header.innerHTML = `Option ${this.num + 1}`;
-        this.removeButton.setAttribute('type', 'button');
-        this.removeButton.setAttribute('onclick', `questions[${this.question.getNum()}].removeOption(${this.num})`);
-        this.removeButton.setAttribute('value', 'Remove Option');
-        this.textLabel.innerHTML = 'Text';
-        this.valueLabel.innerHTML = 'Value';
-        this.textInput.setAttribute('type', 'text');
-        this.valueInput.setAttribute('type', 'number');
+        this._removeButton.setAttribute('onclick', `questions[${this._parent.num}].removeOption(${this._num})`);
+        this._valueLabel.innerHTML = 'Value';
+        this._valueInput.setAttribute('type', 'number');
     }
 
     setIds() {
-        this.id = `${this.question.getId()}option${this.num}`;
-        this.div.setAttribute('id', `${this.id}Div`);
-        this.textLabel.setAttribute('for', `${this.id}Text`);
-        this.valueLabel.setAttribute('for', `${this.id}Value`);
-        this.textInput.setAttribute('name', `${this.id}Text`);
-        this.textInput.setAttribute('id', `${this.id}Text`);
-        this.valueInput.setAttribute('name', `${this.id}Value`);
-        this.valueInput.setAttribute('id', `${this.id}Value`);
+        super.setIds();
+        this._valueLabel.setAttribute('for', `${this._id}Value`);
+        this._valueInput.setAttribute('name', `${this._id}Value`);
+        this._valueInput.setAttribute('id', `${this._id}Value`);
     }
 
-    appendChildren(optionDiv) {
-        optionDiv.appendChild(this.div);
-        this.div.appendChild(this.header);
-        this.div.appendChild(this.removeButton);
-        this.div.appendChild(this.form);
-        this.form.appendChild(this.textLabel);
-        this.form.appendChild(this.textInput);
-        this.form.appendChild(this.valueLabel);
-        this.form.appendChild(this.valueInput);
+    appendChildren() {
+        super.appendChildren();
+        this._form.appendChild(this._valueLabel);
+        this._form.appendChild(this._valueInput);
     }
 
-    //get
+    //getters
 
-    getId() {
-        return this.id;
+    get num() {
+        return super.num;
+    }
+    get value() {
+        return this._valueInput.value;
     }
 
-    getNum() {
-        return this.num;
+    //setters
+
+    set value(value) {
+        this._valueInput.setAttribute('value', value);
     }
-
-    getValue() {
-        return this.valueInput.value;
-    }
-
-    getText() {
-        return this.textInput.value;
-    }
-
-    //set
-
-    setText(text) {
-        this.textInput.setAttribute('value', text);
-    }
-
-    setValue(value) {
-        this.valueInput.setAttribute('value', value);
-    }
-
-    setNum(num) {
-        this.num = num;
-        this.updateElementsNum();
-    }
-
-    //remove
-
-    remove() {
-        this.div.remove()
-    }
-
-    //update
-
-    updateElementsNum() {
-        this.setIds();
-        this.header.innerHTML = `Option ${this.num + 1}`;
-        this.removeButton.setAttribute('onclick', `questions[${this.question.getNum()}].removeOption(${this.num})`);
+    set num(num) {
+        super.num = num;
+        this._removeButton.setAttribute('onclick', `questions[${this._parent.num}].removeOption(${this._num})`);
+        this._valueLabel.setAttribute('for', `${this._id}Value`);
+        this._valueInput.setAttribute('name', `${this._id}Value`);
+        this._valueInput.setAttribute('id', `${this._id}Value`);
     }
 }
 
-class Result {
+class Result extends QuizElement{
     constructor(num) {
-        this.num = num;
-        var resultDiv = document.getElementById('resultDiv');
-        //Create elements
+        super(num, 'result');
         this.createElements();
-        //Set attributes
         this.setAttributes();
-        //Append children
-        this.appendChildren(resultDiv);
+        this.appendChildren();
     }
 
     createElements() {
-        this.div = document.createElement('div');
-        this.header = document.createElement('h3');
-        this.removeButton = document.createElement('input');
-        this.form = document.createElement('form');
-        this.textLabel = document.createElement('label');
-        this.lowerLabel = document.createElement('label');
-        this.upperLabel = document.createElement('label');
-        this.detailLabel = document.createElement('label');
-        this.textInput = document.createElement('input');
-        this.lowerInput = document.createElement('input');
-        this.upperInput = document.createElement('input');
-        this.detailInput = document.createElement('textarea');
+        super.createElements();
+        this._lowerLabel = document.createElement('label');
+        this._upperLabel = document.createElement('label');
+        this._detailLabel = document.createElement('label');
+        this._lowerInput = document.createElement('input');
+        this._upperInput = document.createElement('input');
+        this._detailInput = document.createElement('textarea');
     }
 
     setAttributes() {
+        super.setAttributes();
         this.setIds();
-        this.header.innerHTML = `Result ${this.num + 1}`;
-        this.removeButton.setAttribute('type', 'button');
-        this.removeButton.setAttribute('onclick', `removeResult(${this.num})`);
-        this.removeButton.setAttribute('value', 'Remove Result');
-        this.textLabel.innerHTML = 'Text';
-        this.textInput.setAttribute('type', 'text');
-        this.lowerLabel.innerHTML = 'Lower Value';
-        this.lowerInput.setAttribute('type', 'number');
-        this.upperLabel.innerHTML = 'Upper Value';
-        this.upperInput.setAttribute('type', 'number');
-        this.detailLabel.innerHTML = 'Detail';
-        this.detailInput.setAttribute('rows', '5');
-        this.detailInput.setAttribute('cols', '50');
+        this._lowerLabel.innerHTML = 'Lower Value';
+        this._lowerInput.setAttribute('type', 'number');
+        this._upperLabel.innerHTML = 'Upper Value';
+        this._upperInput.setAttribute('type', 'number');
+        this._detailLabel.innerHTML = 'Detail';
+        this._detailInput.setAttribute('rows', '5');
+        this._detailInput.setAttribute('cols', '50');
     }
 
     setIds() {
-        this.id = `result${this.num}`;
-        this.div.setAttribute('id', `${this.id}Div`);
-        this.textLabel.setAttribute('for', `${this.id}Text`);
-        this.textInput.setAttribute('id', `${this.id}Text`);
-        this.textInput.setAttribute('name', `${this.id}Text`);
-        this.lowerLabel.setAttribute('for', `${this.id}Lower`);
-        this.lowerInput.setAttribute('id', `${this.id}Lower`);
-        this.lowerInput.setAttribute('name', `${this.id}Lower`);
-        this.upperLabel.setAttribute('for', `${this.id}Upper`);
-        this.upperInput.setAttribute('id', `${this.id}Upper`);
-        this.upperInput.setAttribute('name', `${this.id}Upper`);
-        this.detailLabel.setAttribute('for', `${this.id}Detail`);
-        this.detailInput.setAttribute('id', `${this.id}Detail`);
-        this.detailInput.setAttribute('name', `${this.id}Detail`);
+        super.setIds();
+        this._lowerLabel.setAttribute('for', `${this._id}Lower`);
+        this._lowerInput.setAttribute('id', `${this._id}Lower`);
+        this._lowerInput.setAttribute('name', `${this._id}Lower`);
+        this._upperLabel.setAttribute('for', `${this._id}Upper`);
+        this._upperInput.setAttribute('id', `${this._id}Upper`);
+        this._upperInput.setAttribute('name', `${this._id}Upper`);
+        this._detailLabel.setAttribute('for', `${this._id}Detail`);
+        this._detailInput.setAttribute('id', `${this._id}Detail`);
+        this._detailInput.setAttribute('name', `${this._id}Detail`);
     }
 
-    appendChildren(resultDiv) {
-        resultDiv.appendChild(this.div);
-        this.div.appendChild(this.header);
-        this.div.appendChild(this.removeButton);
-        this.div.appendChild(this.form);
-        this.form.appendChild(this.textLabel);
-        this.form.appendChild(this.textInput);
-        this.form.appendChild(this.lowerLabel);
-        this.form.appendChild(this.lowerInput);
-        this.form.appendChild(this.upperLabel);
-        this.form.appendChild(this.upperInput);
-        this.form.appendChild(this.detailLabel);
-        this.form.appendChild(this.detailInput);
+    appendChildren() {
+        super.appendChildren();
+        this._form.appendChild(this._lowerLabel);
+        this._form.appendChild(this._lowerInput);
+        this._form.appendChild(this._upperLabel);
+        this._form.appendChild(this._upperInput);
+        this._form.appendChild(this._detailLabel);
+        this._form.appendChild(this._detailInput);
     }
 
-    //get
+    //getters
 
-    getText() {
-        return this.textInput.value;
+    get lower() {
+        return this._lowerInput.value;
+    }
+    get upper() {
+        return this._upperInput.value;
+    }
+    get detail() {
+        return this._detailInput.innerHTML;
     }
 
-    getLower() {
-        return this.lowerInput.value;
+    //setters
+
+    set lower(lower) {
+        this._lowerInput.setAttribute('value', lower);
     }
-
-    getUpper() {
-        return this.upperInput.value;
+    set upper(upper) {
+        this._upperInput.setAttribute('value', upper);
     }
-
-    getDetail() {
-        return this.detailInput.innerHTML;
+    set detail(detail) {
+        this._detailInput.innerHTML = detail;
     }
-
-    //set
-
-    setText(text) {
-        this.textInput.setAttribute('value', text);
-    }
-
-    setLower(lower) {
-        this.lowerInput.setAttribute('value', lower);
-    }
-
-    setUpper(upper) {
-        this.upperInput.setAttribute('value', upper);
-    }
-
-    setDetail(detail) {
-        this.detailInput.innerHTML = detail;
-    }
-
     setNum(num) {
-        this.num = num;
-        this.updateElementsNum();
-    }
-    //remove
-
-    remove() {
-        this.div.remove();
-        results.splice(this.num, 1);
+        super.num = num;
+        this._lowerLabel.setAttribute('for', `${this._id}Lower`);
+        this._lowerInput.setAttribute('id', `${this._id}Lower`);
+        this._lowerInput.setAttribute('name', `${this._id}Lower`);
+        this._upperLabel.setAttribute('for', `${this._id}Upper`);
+        this._upperInput.setAttribute('id', `${this._id}Upper`);
+        this._upperInput.setAttribute('name', `${this._id}Upper`);
+        this._detailLabel.setAttribute('for', `${this._id}Detail`);
+        this._detailInput.setAttribute('id', `${this._id}Detail`);
+        this._detailInput.setAttribute('name', `${this._id}Detail`);
     }
 
     //update
-
-    updateElementsNum() {
-        this.setIds();
-        this.header.innerHTML = `Result ${this.num + 1}`;
-        this.removeButton.setAttribute('onclick', `removeResult(${this.num})`);
-    }
     
 }
 
@@ -421,10 +360,11 @@ function addResult() {
 
 function removeResult(num) {
     results[num].remove();
+    results.splice(num, 1);
     resultNum--;
 
     for (let i = num; i < resultNum; i++) {
-        results[i].setNum(i);
+        results[i].num = i;
     }
 }
 
@@ -444,9 +384,9 @@ function outputCode() {
     for (let i = 0; i < resultNum; i++) {
         let result = results[i];
         output += `
-        if(score >= ${result.getLower()} && score <= ${result.getUpper()}){
-            document.getElementById('resultHead').innerHTML = '${result.getText()}';
-            document.getElementById('resultBody').innerHTML = '${result.getDetail()}';
+        if(score >= ${result.lower} && score <= ${result.upper}){
+            document.getElementById('resultHead').innerHTML = '${result.text}';
+            document.getElementById('resultBody').innerHTML = '${result.detail}';
         }`;
         if (i + 1 != resultNum) {
             output += "else";
@@ -464,8 +404,8 @@ function outputCode() {
         for (let j = 0; j < question.optionNum; j++) {
             let option = question.getOption(j);
             output += `
-            <input type='radio' id='${option.getId()}' name='${question.id}' value='option${option.getNum()}' onclick='setScore(${option.getValue()}, ${question.num})'>
-            <label for='${option.getId()}'>${option.getText()}</label>`;
+            <input type='radio' id='${option.id}' name='${question.id}' value='option${option.num}' onclick='setScore(${option.value}, ${question.num})'>
+            <label for='${option.id}'>${option.text}</label>`;
         }
         output += `
         </form>`
@@ -500,37 +440,37 @@ function autofill() {
     addQuestion();
     addQuestion();
     
-    questions[0].setText("Question 1");
-    questions[1].setText("Question 2");
-    questions[2].setText("Question 3");
+    questions[0].text = "Question 1";
+    questions[1].text = "Question 2";
+    questions[2].text = "Question 3";
 
     for (let i = 0; i < 3; i++) {
         questions[i].addOption();
         questions[i].addOption();
         questions[i].addOption();
 
-        questions[i].getOption(0).setText("Positive");
-        questions[i].getOption(0).setValue(1);
-        questions[i].getOption(1).setText("Neutral");
-        questions[i].getOption(1).setValue(0);
-        questions[i].getOption(2).setText("Negative");
-        questions[i].getOption(2).setValue(-1);
+        questions[i].getOption(0).text = "Positive";
+        questions[i].getOption(0).value = 1;
+        questions[i].getOption(1).text = "Neutral";
+        questions[i].getOption(1).value = 0;
+        questions[i].getOption(2).text = "Negative";
+        questions[i].getOption(2).value = -1;
     }
     addResult();
     addResult();
     addResult();
 
-    results[0].setText("Negative");
-    results[0].setDetail("You got a negative score");
-    results[0].setLower(-3);
-    results[0].setUpper(-1);
-    results[1].setText("Neutral");
-    results[1].setDetail("You got a neutral score");
-    results[1].setLower(0);
-    results[1].setUpper(0);
-    results[2].setText("Positive");
-    results[2].setDetail("You got a positive score");
-    results[2].setLower(1);
-    results[2].setUpper(3);
+    results[0].text = "Negative";
+    results[0].detail = "You got a negative score";
+    results[0].lower = -3;
+    results[0].upper = -1;
+    results[1].text = "Neutral";
+    results[1].detail = "You got a neutral score";
+    results[1].lower = 0;
+    results[1].upper = 0;
+    results[2].text = "Positive";
+    results[2].detail = "You got a positive score";
+    results[2].lower = 1;
+    results[2].upper = 3;
 }
 
