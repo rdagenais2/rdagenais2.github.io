@@ -1,0 +1,34 @@
+.option{
+    margin-left: 25px;
+}
+
+.addButton{
+    background-color: green;
+    color: white;
+    border-radius: 25px;
+    border: none;
+}
+
+.addButton:hover{
+    background-color: lightgreen;
+}
+
+.removeButton{
+    background-color: red;
+    color: white;
+    border-radius: 25px;
+    border: none;
+}
+
+.removeButton:hover{
+    background-color: pink;
+}
+
+.elementDiv{
+    border: solid;
+    border-color: grey;
+}
+
+label{
+    display: block;
+}

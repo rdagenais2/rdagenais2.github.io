@@ -26,12 +26,18 @@ class QuizElement {
     }
 
     setAttributes() {
+        //base attributes
         this._header.innerHTML = `${this._type.charAt(0).toUpperCase() + this._type.slice(1)} ${this._num + 1}`;
         this._removeButton.setAttribute('type', 'button');
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
         this._removeButton.setAttribute('value', `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`);
         this._textLabel.innerHTML = 'Text';
         this._textInput.setAttribute('type', 'text');
+
+        //class attributes
+        this._div.classList += `${this._type} `
+        this._div.classList += 'elementDiv ';
+        this._removeButton.classList += 'removeButton ';
     }
 
     setIds() {
@@ -122,9 +128,14 @@ class Question extends QuizElement{
     setAttributes() {
         this.setIds();
         super.setAttributes();
+        //base attributes
         this._optionButton.setAttribute('type', 'button');
         this._optionButton.setAttribute('value', 'Add Option');
         this._optionButton.setAttribute('onclick', `questions[${this._num}].addOption()`);
+
+        //class attributes
+        this._optionButton.classList += 'addButton ';
+        this._optionButton.classList += 'option ';
     }
 
     setIds() {
@@ -197,9 +208,13 @@ class Option extends QuizElement {
     setAttributes() {
         super.setAttributes();
         this.setIds();
+        //base attributes
         this._removeButton.setAttribute('onclick', `questions[${this._parent.num}].removeOption(${this._num})`);
         this._valueLabel.innerHTML = 'Value';
         this._valueInput.setAttribute('type', 'number');
+
+        //class attributes
+       
     }
 
     setIds() {
