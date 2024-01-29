@@ -346,6 +346,53 @@ class Result extends QuizElement{
     
 }
 
+class inputArea {
+    constructor(id, type) {
+        this._id = id; 
+        this._type = type;
+        //create
+        this._div = document.createElement('div');
+        this._label = document.createElement('label');
+        if (type == "textarea") {
+            this._input = document.createElement('textarea');
+        } else {
+            this._input = document.createElement('input');
+        }
+        //attributes
+        this._div.setAttribute('id', this._id);
+        this._label.setAttribute('for', this._id);
+        this._input.setAttribute('id', this._id);
+        this._input.setAttribute('name', this._id);
+        if (this._type != 'textarea') {
+            this._input.setAttribute('type', this._type);
+        }
+        //child
+        this._div.appendChild(this._label);
+        this._div.appendChild(this._input);
+    }
+
+    //getters
+
+    get value() {
+        return this._input.value;
+    }
+    get div() {
+        return this._div;
+    }
+
+    //set
+
+    set value(value) {
+        this._input.setAttribute('value', value);
+    }
+    set id(id) {
+        this._id = id;
+        this._div.setAttribute('id', this._id);
+        this._label.setAttribute('for', this._id);
+        this._input.setAttribute('id', this._id);
+        this._input.setAttribute('name', this._id);
+    }
+}
 //Global variables
 
 const questions = [];
