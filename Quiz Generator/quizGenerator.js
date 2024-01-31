@@ -30,9 +30,9 @@ class QuizElement {
         this._header.innerHTML = `${this._type.charAt(0).toUpperCase() + this._type.slice(1)} ${this._num + 1}`;
         this._removeButton.setAttribute('type', 'submit');
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
-        this._removeButton.setAttribute('value', '-');
-        this._removeButton.setAttribute('onmouseover', `${this.globalLocation}.removeHover(true)`);
-        this._removeButton.setAttribute('onmouseout', `${this.globalLocation}.removeHover(false)`);
+        this._removeButton.setAttribute('value', `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`);
+        //this._removeButton.setAttribute('onmouseover', `${this.globalLocation}.removeHover(true)`);
+        //this._removeButton.setAttribute('onmouseout', `${this.globalLocation}.removeHover(false)`);
 
         //class attributes
         this._div.classList += `${this._type} `
@@ -102,7 +102,7 @@ class QuizElement {
             this.num = this._num;
         }
     }
-
+    /*
     removeHover(on) {
         if (on) {
             this._removeButton.setAttribute('value', `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`);
@@ -110,7 +110,7 @@ class QuizElement {
             this._removeButton.setAttribute('value', '--');
         }
     }
-
+    */
     //remove
 
     remove() {
@@ -325,6 +325,7 @@ class InputArea {
         this._text = text;
         this._rows = rows;
         this._columns = columns;
+
         //create
         this._div = document.createElement('div');
         this._label = document.createElement('label');
@@ -334,7 +335,7 @@ class InputArea {
             this._input = document.createElement('input');
         }
         //attributes
-        this._div.setAttribute('id', `${ this._id }Div`);
+        this._div.setAttribute('id', `${this._id}Div`);
         this._label.setAttribute('for', this._id);
         this._label.innerHTML = this._text;
         this._input.setAttribute('id', this._id);
