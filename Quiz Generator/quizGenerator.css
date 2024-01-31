@@ -1,0 +1,85 @@
+h1, h3, h4, label {
+    font-family: arial,helvetica,sans-serif;
+}
+
+body{
+    padding: 0px 0px 0px 0px;
+    background-color: lightblue;
+}
+
+h3, h4{
+    margin-top:0px;
+}
+
+label {
+    display: block;
+    margin-bottom: 3px;
+}
+
+input[type='submit'] {
+    font-family: arial,helvetica,sans-serif;
+    color: white;
+    border-radius: 25px;
+    border: none;
+}
+
+.menuButton{
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.option{
+    margin-left: 25px;
+}
+
+.addButton{
+    background-color: green;
+}
+
+.addButton:hover{
+    background-color: lightgreen;
+}
+
+.removeButton{
+    background-color: red;
+}
+
+.removeButton:hover{
+    background-color: pink;
+}
+
+.outputButton{
+    background-color: goldenrod;
+}
+
+.outputButton:hover{
+    background-color: gold;
+}
+
+.devtool{
+    background-color: black;
+}
+
+.devtool:hover{
+    background-color: dimgrey;
+}
+
+.nav{
+    background-color: black;
+}
+
+.nav:hover{
+    background-color: dimgrey;
+}
+
+.elementDiv{
+    border: ridge;
+    border-color: grey;
+    padding: 10px 5px 10px 5px;
+}
+
+.textArea{
+    display: block;
+    margin: 10px 0px 10px 0px;
+}
+

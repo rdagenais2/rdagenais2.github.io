@@ -10,6 +10,7 @@ class QuizElement {
         } else {
             this._mainDiv = document.getElementById(`${type}Div`);
         }
+        this._id = this.id;
     }
 
     createElements() {
@@ -21,25 +22,27 @@ class QuizElement {
         }
         this._removeButton = document.createElement('input');
         this._form = document.createElement('form');
-        this._textLabel = document.createElement('label');
-        this._textInput = document.createElement('input');
+        this._text = new InputArea(`${this._id}Text`, 'text', 'Text');
     }
 
     setAttributes() {
+        //base attributes
         this._header.innerHTML = `${this._type.charAt(0).toUpperCase() + this._type.slice(1)} ${this._num + 1}`;
-        this._removeButton.setAttribute('type', 'button');
+        this._removeButton.setAttribute('type', 'submit');
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
         this._removeButton.setAttribute('value', `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`);
-        this._textLabel.innerHTML = 'Text';
-        this._textInput.setAttribute('type', 'text');
+        //this._removeButton.setAttribute('onmouseover', `${this.globalLocation}.removeHover(true)`);
+        //this._removeButton.setAttribute('onmouseout', `${this.globalLocation}.removeHover(false)`);
+
+        //class attributes
+        this._div.classList += `${this._type} `
+        this._div.classList += 'elementDiv ';
+        this._removeButton.classList += 'removeButton ';
     }
 
     setIds() {
         this._id = this.id;
         this._div.setAttribute('id', `${this._id}Div`);
-        this._textLabel.setAttribute('for', `${this._id}Text`);
-        this._textInput.setAttribute('id', `${this._id}Text`);
-        this._textInput.setAttribute('name', `${this._id}Text`);
     }
 
     appendChildren() {
@@ -47,8 +50,7 @@ class QuizElement {
         this._div.appendChild(this._header);
         this._div.appendChild(this._removeButton);
         this._div.appendChild(this._form);
-        this._form.appendChild(this._textLabel);
-        this._form.appendChild(this._textInput);
+        this._form.appendChild(this._text.div);
     }
 
     //getters
@@ -67,10 +69,17 @@ class QuizElement {
         }
     }
     get text() {
-        return this._textInput.value;
+        return this._text.value;
     }
     get parent() {
         return this._parent;
+    }
+    get globalLocation() {
+        if (this._type == 'question' || this._type == 'result') {
+            return `${this._type}s[${this._num}]`;
+        } else if (this._type == 'option') {
+            return `${this._parent.type}s[${this._parent.num}].get${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`;
+        }
     }
 
     //setters
@@ -81,12 +90,10 @@ class QuizElement {
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
         this._id = this.id;
         this._div.setAttribute('id', `${this._id}Div`);
-        this._textLabel.setAttribute('for', `${this._id}Text`);
-        this._textInput.setAttribute('id', `${this._id}Text`);
-        this._textInput.setAttribute('name', `${this._id}Text`);
+        this._text.id = `${this._id}Text`;
     }
     set text(text) {
-        this._textInput.setAttribute('value', text);
+        this._text.value = text;
     }
 
     //update
@@ -95,7 +102,15 @@ class QuizElement {
             this.num = this._num;
         }
     }
-
+    /*
+    removeHover(on) {
+        if (on) {
+            this._removeButton.setAttribute('value', `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`);
+        } else if (!on) {
+            this._removeButton.setAttribute('value', '--');
+        }
+    }
+    */
     //remove
 
     remove() {
@@ -122,9 +137,14 @@ class Question extends QuizElement{
     setAttributes() {
         this.setIds();
         super.setAttributes();
-        this._optionButton.setAttribute('type', 'button');
+        //base attributes
+        this._optionButton.setAttribute('type', 'submit');
         this._optionButton.setAttribute('value', 'Add Option');
         this._optionButton.setAttribute('onclick', `questions[${this._num}].addOption()`);
+
+        //class attributes
+        this._optionButton.classList += 'addButton ';
+        this._optionButton.classList += 'option ';
     }
 
     setIds() {
@@ -190,29 +210,26 @@ class Option extends QuizElement {
 
     createElements() {
         super.createElements();
-        this._valueLabel = document.createElement('label');
-        this._valueInput = document.createElement('input');
+        this._value = new InputArea(`${this._id}Value`, 'number', 'Value');
     }
 
     setAttributes() {
         super.setAttributes();
         this.setIds();
+        //base attributes
         this._removeButton.setAttribute('onclick', `questions[${this._parent.num}].removeOption(${this._num})`);
-        this._valueLabel.innerHTML = 'Value';
-        this._valueInput.setAttribute('type', 'number');
+
+        //class attributes
+       
     }
 
     setIds() {
         super.setIds();
-        this._valueLabel.setAttribute('for', `${this._id}Value`);
-        this._valueInput.setAttribute('name', `${this._id}Value`);
-        this._valueInput.setAttribute('id', `${this._id}Value`);
     }
 
     appendChildren() {
         super.appendChildren();
-        this._form.appendChild(this._valueLabel);
-        this._form.appendChild(this._valueInput);
+        this._form.appendChild(this._value.div);
     }
 
     //getters
@@ -221,20 +238,18 @@ class Option extends QuizElement {
         return super.num;
     }
     get value() {
-        return this._valueInput.value;
+        return this._value.value;
     }
 
     //setters
 
     set value(value) {
-        this._valueInput.setAttribute('value', value);
+        this._value.value = value;
     }
     set num(num) {
         super.num = num;
         this._removeButton.setAttribute('onclick', `questions[${this._parent.num}].removeOption(${this._num})`);
-        this._valueLabel.setAttribute('for', `${this._id}Value`);
-        this._valueInput.setAttribute('name', `${this._id}Value`);
-        this._valueInput.setAttribute('id', `${this._id}Value`);
+        this._value.id = `${this._id}Value`;
     }
 }
 
@@ -248,89 +263,125 @@ class Result extends QuizElement{
 
     createElements() {
         super.createElements();
-        this._lowerLabel = document.createElement('label');
-        this._upperLabel = document.createElement('label');
-        this._detailLabel = document.createElement('label');
-        this._lowerInput = document.createElement('input');
-        this._upperInput = document.createElement('input');
-        this._detailInput = document.createElement('textarea');
+        this._lower = new InputArea(`${this._id}Lower`, 'number', 'Lower Value');
+        this._upper = new InputArea(`${this._id}Upper`, 'number', 'Upper Value');
+        this._detail = new InputArea(`${this._id}Detail`, 'textarea', 'Detail', 5, 50);
     }
 
     setAttributes() {
         super.setAttributes();
         this.setIds();
-        this._lowerLabel.innerHTML = 'Lower Value';
-        this._lowerInput.setAttribute('type', 'number');
-        this._upperLabel.innerHTML = 'Upper Value';
-        this._upperInput.setAttribute('type', 'number');
-        this._detailLabel.innerHTML = 'Detail';
-        this._detailInput.setAttribute('rows', '5');
-        this._detailInput.setAttribute('cols', '50');
     }
 
     setIds() {
         super.setIds();
-        this._lowerLabel.setAttribute('for', `${this._id}Lower`);
-        this._lowerInput.setAttribute('id', `${this._id}Lower`);
-        this._lowerInput.setAttribute('name', `${this._id}Lower`);
-        this._upperLabel.setAttribute('for', `${this._id}Upper`);
-        this._upperInput.setAttribute('id', `${this._id}Upper`);
-        this._upperInput.setAttribute('name', `${this._id}Upper`);
-        this._detailLabel.setAttribute('for', `${this._id}Detail`);
-        this._detailInput.setAttribute('id', `${this._id}Detail`);
-        this._detailInput.setAttribute('name', `${this._id}Detail`);
     }
 
     appendChildren() {
         super.appendChildren();
-        this._form.appendChild(this._lowerLabel);
-        this._form.appendChild(this._lowerInput);
-        this._form.appendChild(this._upperLabel);
-        this._form.appendChild(this._upperInput);
-        this._form.appendChild(this._detailLabel);
-        this._form.appendChild(this._detailInput);
+        this._form.appendChild(this._lower.div);
+        this._form.appendChild(this._upper.div);
+        this._form.appendChild(this._detail.div);
     }
 
     //getters
 
     get lower() {
-        return this._lowerInput.value;
+        return this._lower.value;
     }
     get upper() {
-        return this._upperInput.value;
+        return this._upper.value;
     }
     get detail() {
-        return this._detailInput.innerHTML;
+        return this._detail.value;
     }
 
     //setters
 
     set lower(lower) {
-        this._lowerInput.setAttribute('value', lower);
+        this._lower.value = lower;
     }
     set upper(upper) {
-        this._upperInput.setAttribute('value', upper);
+        this._upper.value = upper;
     }
     set detail(detail) {
-        this._detailInput.innerHTML = detail;
+        this._detail.value = detail;
     }
     setNum(num) {
         super.num = num;
-        this._lowerLabel.setAttribute('for', `${this._id}Lower`);
-        this._lowerInput.setAttribute('id', `${this._id}Lower`);
-        this._lowerInput.setAttribute('name', `${this._id}Lower`);
-        this._upperLabel.setAttribute('for', `${this._id}Upper`);
-        this._upperInput.setAttribute('id', `${this._id}Upper`);
-        this._upperInput.setAttribute('name', `${this._id}Upper`);
-        this._detailLabel.setAttribute('for', `${this._id}Detail`);
-        this._detailInput.setAttribute('id', `${this._id}Detail`);
-        this._detailInput.setAttribute('name', `${this._id}Detail`);
+        this._lower.id = `${this._id}Lower`;
+        this._upper.id = `${this._id}Upper`;
+        this._detail.id = `${this._id}Detail`
     }
 
     //update
     
 }
 
+class InputArea {
+    constructor(id, type, text, rows = 0, columns = 0) {
+        this._id = id; 
+        this._type = type;
+        this._text = text;
+        this._rows = rows;
+        this._columns = columns;
+
+        //create
+        this._div = document.createElement('div');
+        this._label = document.createElement('label');
+        if (type == "textarea") {
+            this._input = document.createElement('textarea');
+        } else {
+            this._input = document.createElement('input');
+        }
+        //attributes
+        this._div.setAttribute('id', `${this._id}Div`);
+        this._label.setAttribute('for', this._id);
+        this._label.innerHTML = this._text;
+        this._input.setAttribute('id', this._id);
+        this._input.setAttribute('name', this._id);
+        if (this._type != 'textarea') {
+            this._input.setAttribute('type', this._type);
+        } else {
+            this._input.setAttribute('rows', this._rows);
+            this._input.setAttribute('cols', this._columns);
+        }
+        this._div.classList += 'textArea ';
+        //child
+        this._div.appendChild(this._label);
+        this._div.appendChild(this._input);
+    }
+
+    //getters
+
+    get value() {
+        if (this._type != 'textarea') {
+            return this._input.value;
+        } else {
+            return this._input.innerHTML;
+        }
+    }
+    get div() {
+        return this._div;
+    }
+
+    //set
+
+    set value(value) {
+        if (this._type != 'textarea') {
+            this._input.setAttribute('value', value);
+        } else {
+            this._input.innerHTML = value;
+        }
+    }
+    set id(id) {
+        this._id = id;
+        this._div.setAttribute('id', this._id);
+        this._label.setAttribute('for', this._id);
+        this._input.setAttribute('id', this._id);
+        this._input.setAttribute('name', this._id);
+    }
+}
 //Global variables
 
 const questions = [];
