@@ -1,12 +1,21 @@
+h1, h3, h4, label {
+    font-family: arial,helvetica,sans-serif;
+}
+
+body{
+    background-color: lightgrey;
+}
+
+h4{
+    margin-top:0px;
+}
+
 .option{
     margin-left: 25px;
 }
 
 .addButton{
     background-color: green;
-    color: white;
-    border-radius: 25px;
-    border: none;
 }
 
 .addButton:hover{
@@ -15,20 +24,39 @@
 
 .removeButton{
     background-color: red;
-    color: white;
-    border-radius: 25px;
-    border: none;
 }
 
 .removeButton:hover{
     background-color: pink;
 }
 
-.elementDiv{
-    border: solid;
-    border-color: grey;
+.devtool{
+    background-color: black;
 }
 
-label{
+.devtool:hover{
+    background-color: dimgrey;
+}
+
+input[type='submit'] {
+    font-family: arial,helvetica,sans-serif;
+    color: white;
+    border-radius: 25px;
+    border: none;
+}
+
+.elementDiv{
+    border: ridge;
+    border-color: grey;
+    padding: 10px 5px 10px 5px;
+}
+
+.textArea{
     display: block;
+    margin: 10px 0px 10px 0px;
+}
+
+label {
+    display: block;
+    margin-bottom: 3px;
 }

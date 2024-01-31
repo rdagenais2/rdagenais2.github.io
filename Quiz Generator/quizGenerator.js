@@ -28,9 +28,11 @@ class QuizElement {
     setAttributes() {
         //base attributes
         this._header.innerHTML = `${this._type.charAt(0).toUpperCase() + this._type.slice(1)} ${this._num + 1}`;
-        this._removeButton.setAttribute('type', 'button');
+        this._removeButton.setAttribute('type', 'submit');
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
-        this._removeButton.setAttribute('value', `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`);
+        this._removeButton.setAttribute('value', '-');
+        this._removeButton.setAttribute('onmouseover', `${this.globalLocation}.removeHover(true)`);
+        this._removeButton.setAttribute('onmouseout', `${this.globalLocation}.removeHover(false)`);
 
         //class attributes
         this._div.classList += `${this._type} `
@@ -72,6 +74,13 @@ class QuizElement {
     get parent() {
         return this._parent;
     }
+    get globalLocation() {
+        if (this._type == 'question' || this._type == 'result') {
+            return `${this._type}s[${this._num}]`;
+        } else if (this._type == 'option') {
+            return `${this._parent.type}s[${this._parent.num}].get${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`;
+        }
+    }
 
     //setters
 
@@ -91,6 +100,14 @@ class QuizElement {
     parentUpdate() {
         if (this._parent != null) {
             this.num = this._num;
+        }
+    }
+
+    removeHover(on) {
+        if (on) {
+            this._removeButton.setAttribute('value', `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`);
+        } else if (!on) {
+            this._removeButton.setAttribute('value', '--');
         }
     }
 
@@ -121,7 +138,7 @@ class Question extends QuizElement{
         this.setIds();
         super.setAttributes();
         //base attributes
-        this._optionButton.setAttribute('type', 'button');
+        this._optionButton.setAttribute('type', 'submit');
         this._optionButton.setAttribute('value', 'Add Option');
         this._optionButton.setAttribute('onclick', `questions[${this._num}].addOption()`);
 
@@ -328,6 +345,7 @@ class InputArea {
             this._input.setAttribute('rows', this._rows);
             this._input.setAttribute('cols', this._columns);
         }
+        this._div.classList += 'textArea ';
         //child
         this._div.appendChild(this._label);
         this._div.appendChild(this._input);
