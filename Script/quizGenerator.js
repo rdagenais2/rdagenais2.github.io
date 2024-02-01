@@ -22,7 +22,7 @@ class QuizElement {
         }
         this._removeButton = document.createElement('input');
         this._form = document.createElement('form');
-        this._text = new InputArea(`${this._id}Text`, 'text', 'Text');
+        this._text = new TextInput(`${this._id}Text`, 'Text');
     }
 
     setAttributes() {
@@ -210,7 +210,7 @@ class Option extends QuizElement {
 
     createElements() {
         super.createElements();
-        this._value = new InputArea(`${this._id}Value`, 'number', 'Value');
+        this._value = new NumberArea(`${this._id}Value`, 'Value');
     }
 
     setAttributes() {
@@ -263,9 +263,9 @@ class Result extends QuizElement{
 
     createElements() {
         super.createElements();
-        this._lower = new InputArea(`${this._id}Lower`, 'number', 'Lower Value');
-        this._upper = new InputArea(`${this._id}Upper`, 'number', 'Upper Value');
-        this._detail = new InputArea(`${this._id}Detail`, 'textarea', 'Detail', 5, 50);
+        this._lower = new NumberInput(`${this._id}Lower`, 'Lower Value');
+        this._upper = new NumberInput(`${this._id}Upper`, 'Upper Value');
+        this._detail = new TextArea(`${this._id}Detail`, 'Detail', 5, 50);
     }
 
     setAttributes() {
@@ -319,61 +319,35 @@ class Result extends QuizElement{
 }
 
 class InputArea {
-    constructor(id, type, text, rows = 0, columns = 0) {
-        this._id = id; 
-        this._type = type;
+    constructor(id, text) {
+        this._id = id;
         this._text = text;
-        this._rows = rows;
-        this._columns = columns;
+    }
 
-        //create
+    create() {
         this._div = document.createElement('div');
         this._label = document.createElement('label');
-        if (type == "textarea") {
-            this._input = document.createElement('textarea');
-        } else {
-            this._input = document.createElement('input');
-        }
-        //attributes
+    }
+
+    attributes() {
         this._div.setAttribute('id', `${this._id}Div`);
         this._label.setAttribute('for', this._id);
         this._label.innerHTML = this._text;
         this._input.setAttribute('id', this._id);
         this._input.setAttribute('name', this._id);
-        if (this._type != 'textarea') {
-            this._input.setAttribute('type', this._type);
-        } else {
-            this._input.setAttribute('rows', this._rows);
-            this._input.setAttribute('cols', this._columns);
-        }
-        this._div.classList += 'textArea ';
-        //child
+        this._div.classList += 'inputArea ';
+    }
+
+    append() {
         this._div.appendChild(this._label);
         this._div.appendChild(this._input);
     }
 
     //getters
-
-    get value() {
-        if (this._type != 'textarea') {
-            return this._input.value;
-        } else {
-            return this._input.innerHTML;
-        }
-    }
     get div() {
         return this._div;
     }
-
     //set
-
-    set value(value) {
-        if (this._type != 'textarea') {
-            this._input.setAttribute('value', value);
-        } else {
-            this._input.innerHTML = value;
-        }
-    }
     set id(id) {
         this._id = id;
         this._div.setAttribute('id', this._id);
@@ -382,6 +356,85 @@ class InputArea {
         this._input.setAttribute('name', this._id);
     }
 }
+
+class TextInput extends InputArea {
+    constructor(id, text) {
+        super(id, text);
+        this._type = "text";
+        this.create();
+        this.attributes();
+        this.append();
+    }
+    create() {
+        super.create();
+        this._input = document.createElement('input');
+    }
+    attributes() {
+        super.attributes();
+        this._input.setAttribute('type', this._type);
+        this._div.classList += 'textInput ';
+    }
+    get value() {
+        return this._input.value;
+    }
+    set value(value) {
+        this._input.setAttribute('value', value);
+    }
+}
+
+class NumberInput extends InputArea {
+    constructor(id, text) {
+        super(id, text);
+        this._type = "number";
+        this.create();
+        this.attributes();
+        this.append();
+    }
+    create() {
+        super.create();
+        this._input = document.createElement('input');
+    }
+    attributes() {
+        super.attributes();
+        this._input.setAttribute('type', this._type);
+        this._div.classList += 'numberInput ';
+    }
+    get value() {
+        return this._input.value;
+    }
+    set value(value) {
+        this._input.setAttribute('value', value);
+    }
+}
+
+class TextArea extends InputArea{
+    constructor(id, text, rows, columns) {
+        super(id, text);
+        this._type = 'textarea';
+        this._rows = rows;
+        this._columns = columns;
+        this.create();
+        this.attributes();
+        this.append();
+    }
+    create() {
+        super.create();
+        this._input = document.createElement('textarea');
+    }
+    attributes() {
+        super.attributes();
+        this._input.setAttribute('rows', this._rows);
+        this._input.setAttribute('cols', this._columns);
+        this._div.classList += 'textArea ';
+    }
+
+    get value() {
+        return this._input.innerHTML;
+    }
+    set value(value) {
+        this._input.innerHTML = value;
+    }
+} 
 //Global variables
 
 const questions = [];
