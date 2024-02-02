@@ -5,7 +5,7 @@
     <script src="Script/quizGenerator.js"></script>
     <link rel="stylesheet" href="Style/quizGenerator.css">
 </head>
-<body onload="">
+<body onload="showDevtools()">
     <div id="menu">
         <a href="index.html" class="menuButton">
             <input type="submit" value="Home" class="nav">
@@ -24,10 +24,11 @@
         <input type="submit" value="Output Code" onclick="outputCode()" class="outputButton"/>
         <xmp id="outputText"></xmp>
     </div>
-    <iframe id="preview" src="" width="0" height="0" style="visibility: hidden;"></iframe>
+    <div id="preview"></div>
     <div id="devtools" style="visibility: hidden;">
         <input type="submit" value="Show Data" onclick="displayData()" class="devtool" />
         <input type="submit" value="Autofill" onclick="autofill()" class="devtool" />
+        <input type="submit" value="Auto Output" onclick="autofill(); outputCode()" class="devtool" />
     </div>
 </body>
 </html>

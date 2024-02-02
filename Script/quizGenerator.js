@@ -210,7 +210,7 @@ class Option extends QuizElement {
 
     createElements() {
         super.createElements();
-        this._value = new NumberArea(`${this._id}Value`, 'Value');
+        this._value = new NumberInput(`${this._id}Value`, 'Value');
     }
 
     setAttributes() {
@@ -473,62 +473,78 @@ function removeResult(num) {
 }
 
 function outputCode() {
-    let output = `
-    <script>
-    const scores = [];
-    const questionAmt = ${questionNum};
-    function setScore(value, question){
+    let output = document.getElementById('outputText');
+    let preview = document.getElementById('preview');
+    let script = document.createElement('script');
+    let body = document.createElement('div');
+    body.setAttribute('id', 'quizBody');
+    preview.appendChild(script);
+    preview.appendChild(body);
+    let scriptContent = '';
+    scriptContent += `
+    var scores = [];
+    function setScore(question, value){
         scores[question] = value;
     }
     function finalScore(){
         let score = 0;
-        for(let i = 0; i < questionAmt; i++){
+        for(let i = 0; i < scores.length; i++){
             score += scores[i];
         }`;
-    for (let i = 0; i < resultNum; i++) {
+    for (let i = 0; i < results.length; i++) {
         let result = results[i];
-        output += `
+        scriptContent += `
         if(score >= ${result.lower} && score <= ${result.upper}){
             document.getElementById('resultHead').innerHTML = '${result.text}';
             document.getElementById('resultBody').innerHTML = '${result.detail}';
-        }`;
-        if (i + 1 != resultNum) {
-            output += "else";
         }
+        `;
     }
-    output+=`
-    }
-    </script>
-    <div id='quizBody'>`;
-    for (let i = 0; i < questionNum; i++) {
+    scriptContent += '}';
+    script.innerHTML = scriptContent;
+
+    for (let i = 0; i < questions.length; i++) {
         let question = questions[i];
-        output += `
-        <h1>${question.text}<h1>
-        <form>`;
+        let header = document.createElement('h1');
+        header.innerHTML = question.text;
+        let form = document.createElement('form');
+        body.appendChild(header);
+        body.appendChild(form);
         for (let j = 0; j < question.optionNum; j++) {
             let option = question.getOption(j);
-            output += `
-            <input type='radio' id='${option.id}' name='${question.id}' value='option${option.num}' onclick='setScore(${option.value}, ${question.num})'>
-            <label for='${option.id}'>${option.text}</label>`;
+            let button = document.createElement('input');
+            button.setAttribute('type', 'button');
+            button.setAttribute('onclick', `setScore(${i}, ${option.value})`);
+            button.setAttribute('value', option.text);
+            form.appendChild(button);
         }
-        output += `
-        </form>`
+
     }
-    output += `
-    <input type='submit' value='Get Results' onclick='finalScore()'>
-    </div>
-    <div id='results'>
-    <h1 id='resultHead'></h1>
-    <p id='resultBody'></p>
-    </div>`;
-    document.getElementById('outputText').innerHTML = output;
-    var iframe = document.getElementById('preview');
-    iframe.contentWindow.document.open();
-    iframe.contentWindow.document.write(output);
-    iframe.contentWindow.document.close();
-    iframe.setAttribute('width', '1000');
-    iframe.setAttribute('height', '500');
-    iframe.setAttribute('style', 'visibility: visible;');
+    let doneButton = document.createElement('input');
+    doneButton.setAttribute('type', 'button');
+    doneButton.setAttribute('value', 'Get Result');
+    doneButton.setAttribute('onclick', 'finalScore()');
+    body.appendChild(doneButton);
+    let resultHead = document.createElement('h1');
+    let resultBody = document.createElement('p');
+    resultHead.setAttribute('id', 'resultHead');
+    resultBody.setAttribute('id', 'resultBody');
+    body.appendChild(resultHead);
+    body.appendChild(resultBody);
+
+
+
+
+
+    let previewText = preview.innerHTML;
+    let start = previewText.lastIndexOf('</script>');
+    for (let i = start; i < previewText.length - 1; i++) {
+        if (previewText.charAt(i + 1) == '<') {
+            previewText = previewText.substring(0, i + 1) + '\n' + previewText.substring(i + 1);
+            i++;
+        }
+    }
+    output.innerHTML = previewText;
 }
 
 function showDevtools() {
