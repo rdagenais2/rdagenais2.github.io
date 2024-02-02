@@ -23,6 +23,19 @@ button:not(.quiz) {
     border: none;
 }
 
+.propertyDiv{
+
+}
+
+.dataDiv{
+    display:inline-block;
+}
+
+.styleDiv{
+    display:inline-block;
+    float: right;
+}
+
 .menuButton{
     margin-left:auto;
     margin-right:auto;

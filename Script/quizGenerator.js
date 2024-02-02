@@ -22,7 +22,11 @@ class QuizElement {
         }
         this._removeButton = document.createElement('button');
         this._form = document.createElement('form');
+        this._textDiv = document.createElement('div');
+        this._textDataDiv = document.createElement('div');
+        this._textStyleDiv = document.createElement('div');
         this._text = new TextInput(`${this._id}Text`, 'Text');
+        this._textSize = new NumberInput(`${this._id}TextSize`, 'Text Size');
     }
 
     setAttributes() {
@@ -35,6 +39,9 @@ class QuizElement {
         this._div.classList += `${this._type} `
         this._div.classList += 'elementDiv ';
         this._removeButton.classList += 'removeButton ';
+        this._textDiv.classList += 'propertyDiv ';
+        this._textDataDiv.classList += 'dataDiv ';
+        this._textStyleDiv.classList += 'styleDiv';
     }
 
     setIds() {
@@ -47,7 +54,11 @@ class QuizElement {
         this._div.appendChild(this._header);
         this._div.appendChild(this._removeButton);
         this._div.appendChild(this._form);
-        this._form.appendChild(this._text.div);
+        this._form.appendChild(this._textDiv);
+        this._textDiv.appendChild(this._textDataDiv);
+        this._textDiv.appendChild(this._textStyleDiv);
+        this._textDataDiv.appendChild(this._text.div);
+        this._textStyleDiv.appendChild(this._textSize.div);
     }
 
     //getters
@@ -67,6 +78,9 @@ class QuizElement {
     }
     get text() {
         return this._text.value;
+    }
+    get textSize() {
+        return this._textSize.value;
     }
     get parent() {
         return this._parent;
@@ -127,6 +141,7 @@ class Question extends QuizElement{
         this.setIds();
         super.setAttributes();
         //base attributes
+        this._textSize.value = '24';
         this._optionButton.setAttribute('type', 'button');
         this._optionButton.innerHTML = 'Add Option';
         this._optionButton.setAttribute('onclick', `questions[${this._num}].addOption()`);
@@ -155,6 +170,7 @@ class Question extends QuizElement{
     get optionNum() {
         return this._optionNum;
     }
+
     getOption(i) {
         return this._options[i];
     }
@@ -207,6 +223,7 @@ class Option extends QuizElement {
         this.setIds();
         //base attributes
         this._removeButton.setAttribute('onclick', `questions[${this._parent.num}].removeOption(${this._num})`);
+        this._textSize.value = '16';
 
         //class attributes
        
@@ -260,6 +277,7 @@ class Result extends QuizElement{
     setAttributes() {
         super.setAttributes();
         this.setIds();
+        this._textSize.value = '32';
     }
 
     setIds() {
@@ -464,6 +482,7 @@ function removeResult(num) {
 function outputCode() {
     let output = document.getElementById('outputText');
     let preview = document.getElementById('preview');
+    preview.innerHTML = "";
     let script = document.createElement('script');
     let body = document.createElement('div');
     body.setAttribute('id', 'quizBody');
@@ -485,8 +504,11 @@ function outputCode() {
         let result = results[i];
         scriptContent += `
         if(score >= ${result.lower} && score <= ${result.upper}){
-            document.getElementById('resultHead').innerHTML = '${result.text}';
-            document.getElementById('resultBody').innerHTML = '${result.detail}';
+            let resultHead = document.getElementById('resultHead');
+            let resultBody = document.getElementById('resultBody');
+            resultHead.innerHTML = '${result.text}';
+            resultHead.setAttribute('style', 'font-size: ${result.textSize}px;');
+            resultBody.innerHTML = '${result.detail}';
         }
         `;
     }
@@ -497,6 +519,7 @@ function outputCode() {
         let question = questions[i];
         let header = document.createElement('h1');
         header.innerHTML = question.text;
+        header.setAttribute('style', `font-size:${question.textSize}px;`);
         let form = document.createElement('form');
         body.appendChild(header);
         body.appendChild(form);
@@ -506,6 +529,7 @@ function outputCode() {
             let button = document.createElement('button');
             button.setAttribute('type', 'button');
             button.setAttribute('onclick', `setScore(${i}, ${option.value})`);
+            button.setAttribute('style', `font-size:${option.textSize}px;`);
             button.classList += 'quiz ';
             button.innerHTML = option.text;
             form.appendChild(button);
