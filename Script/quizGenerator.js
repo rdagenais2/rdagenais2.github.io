@@ -20,7 +20,7 @@ class QuizElement {
         } else {
             this._header = document.createElement('h3');
         }
-        this._removeButton = document.createElement('input');
+        this._removeButton = document.createElement('button');
         this._form = document.createElement('form');
         this._text = new TextInput(`${this._id}Text`, 'Text');
     }
@@ -28,9 +28,9 @@ class QuizElement {
     setAttributes() {
         //base attributes
         this._header.innerHTML = `${this._type.charAt(0).toUpperCase() + this._type.slice(1)} ${this._num + 1}`;
-        this._removeButton.setAttribute('type', 'submit');
+        this._removeButton.setAttribute('type', 'button');
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
-        this._removeButton.setAttribute('value', `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`);
+        this._removeButton.innerHTML = `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`;
         //this._removeButton.setAttribute('onmouseover', `${this.globalLocation}.removeHover(true)`);
         //this._removeButton.setAttribute('onmouseout', `${this.globalLocation}.removeHover(false)`);
 
@@ -130,7 +130,7 @@ class Question extends QuizElement{
 
     createElements() {
         super.createElements();
-        this._optionButton = document.createElement('input');
+        this._optionButton = document.createElement('button');
         this._optionDiv = document.createElement('div');
     }
 
@@ -138,8 +138,8 @@ class Question extends QuizElement{
         this.setIds();
         super.setAttributes();
         //base attributes
-        this._optionButton.setAttribute('type', 'submit');
-        this._optionButton.setAttribute('value', 'Add Option');
+        this._optionButton.setAttribute('type', 'button');
+        this._optionButton.innerHTML = 'Add Option';
         this._optionButton.setAttribute('onclick', `questions[${this._num}].addOption()`);
 
         //class attributes
@@ -514,19 +514,21 @@ function outputCode() {
 
         for (let j = 0; j < question.optionNum; j++) {
             let option = question.getOption(j);
-            let button = document.createElement('input');
+            let button = document.createElement('button');
             button.setAttribute('type', 'button');
             button.setAttribute('onclick', `setScore(${i}, ${option.value})`);
-            button.setAttribute('value', option.text);
+            button.classList += 'quiz ';
+            button.innerHTML = option.text;
             form.appendChild(button);
         }
 
     }
 
-    let doneButton = document.createElement('input');
+    let doneButton = document.createElement('button');
     doneButton.setAttribute('type', 'button');
-    doneButton.setAttribute('value', 'Get Result');
+    doneButton.innerHTML = 'Get Result';
     doneButton.setAttribute('onclick', 'finalScore()');
+    doneButton.classList += 'quiz ';
     body.appendChild(doneButton);
 
     let resultHead = document.createElement('h1');

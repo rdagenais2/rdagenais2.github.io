@@ -8,7 +8,7 @@
 <body onload="showDevtools()">
     <div id="menu">
         <a href="index.html" class="menuButton">
-            <input type="submit" value="Home" class="nav">
+            <button type="button"  class="nav">Home</button>
         </a>
     </div>
     <div id="header">
@@ -16,19 +16,19 @@
     </div>
     <div id="interface">
         <div id="questionDiv"></div>
-        <input type="submit" value="Add Question" onclick="addQuestion()" class="addButton"/>
+        <button type="button" onclick="addQuestion()" class="addButton">Add Question</button>
         <div id="resultDiv"></div>
-        <input type='submit' value='Add Result' onclick='addResult()' class="addButton"/>
+        <button type='button' onclick='addResult()' class="addButton">Add Result</button>
     </div>
     <div id="outputDiv">
-        <input type="submit" value="Output Code" onclick="outputCode()" class="outputButton"/>
+        <button type="button" onclick="outputCode()" class="outputButton">Output Code</button>
         <xmp id="outputText"></xmp>
     </div>
     <div id="preview"></div>
     <div id="devtools" style="visibility: hidden;">
-        <input type="submit" value="Show Data" onclick="displayData()" class="devtool" />
-        <input type="submit" value="Autofill" onclick="autofill()" class="devtool" />
-        <input type="submit" value="Auto Output" onclick="autofill(); outputCode()" class="devtool" />
+        <button type="button" onclick="displayData()" class="devtool">Show Data</button>
+        <button type="button" onclick="autofill()" class="devtool">Autofill</button>
+        <button type="button" onclick="autofill(); outputCode()" class="devtool">Auto Output</button>
     </div>
 </body>
 </html>
