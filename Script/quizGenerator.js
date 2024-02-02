@@ -480,6 +480,7 @@ function outputCode() {
     body.setAttribute('id', 'quizBody');
     preview.appendChild(script);
     preview.appendChild(body);
+
     let scriptContent = '';
     scriptContent += `
     var scores = [];
@@ -510,6 +511,7 @@ function outputCode() {
         let form = document.createElement('form');
         body.appendChild(header);
         body.appendChild(form);
+
         for (let j = 0; j < question.optionNum; j++) {
             let option = question.getOption(j);
             let button = document.createElement('input');
@@ -520,11 +522,13 @@ function outputCode() {
         }
 
     }
+
     let doneButton = document.createElement('input');
     doneButton.setAttribute('type', 'button');
     doneButton.setAttribute('value', 'Get Result');
     doneButton.setAttribute('onclick', 'finalScore()');
     body.appendChild(doneButton);
+
     let resultHead = document.createElement('h1');
     let resultBody = document.createElement('p');
     resultHead.setAttribute('id', 'resultHead');
@@ -533,17 +537,16 @@ function outputCode() {
     body.appendChild(resultBody);
 
 
-
-
-
     let previewText = preview.innerHTML;
     let start = previewText.lastIndexOf('</script>');
+
     for (let i = start; i < previewText.length - 1; i++) {
         if (previewText.charAt(i + 1) == '<') {
             previewText = previewText.substring(0, i + 1) + '\n' + previewText.substring(i + 1);
             i++;
         }
     }
+    
     output.innerHTML = previewText;
 }
 
