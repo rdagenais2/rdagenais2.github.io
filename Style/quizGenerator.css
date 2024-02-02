@@ -23,6 +23,10 @@ button:not(.quiz) {
     border: none;
 }
 
+select{
+    height: 21px;
+}
+
 .propertyDiv{
 
 }
@@ -92,7 +96,7 @@ button:not(.quiz) {
 }
 
 .inputArea{
-    display: block;
+    display: inline-block;
     margin: 10px 0px 10px 0px;
 }
 

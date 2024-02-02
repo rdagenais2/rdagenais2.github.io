@@ -27,6 +27,7 @@ class QuizElement {
         this._textStyleDiv = document.createElement('div');
         this._text = new TextInput(`${this._id}Text`, 'Text');
         this._textSize = new NumberInput(`${this._id}TextSize`, 'Text Size');
+        this._textFont = new DropdownInput(`${this._id}TextFont`, 'Text Font', ['arial', 'helvetica', 'comic sans']);
     }
 
     setAttributes() {
@@ -36,12 +37,12 @@ class QuizElement {
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
         this._removeButton.innerHTML = `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`;
         //class attributes
-        this._div.classList += `${this._type} `
-        this._div.classList += 'elementDiv ';
-        this._removeButton.classList += 'removeButton ';
-        this._textDiv.classList += 'propertyDiv ';
-        this._textDataDiv.classList += 'dataDiv ';
-        this._textStyleDiv.classList += 'styleDiv';
+        this._div.classList.add(`${this._type}`);
+        this._div.classList.add('elementDiv');
+        this._removeButton.classList.add('removeButton');
+        this._textDiv.classList.add('propertyDiv');
+        this._textDataDiv.classList.add('dataDiv');
+        this._textStyleDiv.classList.add('styleDiv');
     }
 
     setIds() {
@@ -59,6 +60,7 @@ class QuizElement {
         this._textDiv.appendChild(this._textStyleDiv);
         this._textDataDiv.appendChild(this._text.div);
         this._textStyleDiv.appendChild(this._textSize.div);
+        this._textStyleDiv.appendChild(this._textFont.div);
     }
 
     //getters
@@ -80,7 +82,10 @@ class QuizElement {
         return this._text.value;
     }
     get textSize() {
-        return this._textSize.value;
+        return this._textSize.value + 'px';
+    }
+    get textFont() {
+        return this._textFont.value;
     }
     get parent() {
         return this._parent;
@@ -147,8 +152,8 @@ class Question extends QuizElement{
         this._optionButton.setAttribute('onclick', `questions[${this._num}].addOption()`);
 
         //class attributes
-        this._optionButton.classList += 'addButton ';
-        this._optionButton.classList += 'option ';
+        this._optionButton.classList.add('addButton');
+        this._optionButton.classList.add('option');
     }
 
     setIds() {
@@ -342,7 +347,7 @@ class InputArea {
         this._label.innerHTML = this._text;
         this._input.setAttribute('id', this._id);
         this._input.setAttribute('name', this._id);
-        this._div.classList += 'inputArea ';
+        this._div.classList.add('inputArea');
     }
 
     append() {
@@ -379,7 +384,7 @@ class TextInput extends InputArea {
     attributes() {
         super.attributes();
         this._input.setAttribute('type', this._type);
-        this._div.classList += 'textInput ';
+        this._div.classList.add('textInput');
     }
     get value() {
         return this._input.value;
@@ -404,7 +409,7 @@ class NumberInput extends InputArea {
     attributes() {
         super.attributes();
         this._input.setAttribute('type', this._type);
-        this._div.classList += 'numberInput ';
+        this._div.classList.add('numberInput');
     }
     get value() {
         return this._input.value;
@@ -432,7 +437,7 @@ class TextArea extends InputArea{
         super.attributes();
         this._input.setAttribute('rows', this._rows);
         this._input.setAttribute('cols', this._columns);
-        this._div.classList += 'textArea ';
+        this._div.classList.add('textArea');
     }
 
     get value() {
@@ -442,6 +447,48 @@ class TextArea extends InputArea{
         this._input.innerHTML = value;
     }
 } 
+
+class DropdownInput extends InputArea {
+    constructor(id, text, optionList) {
+        super(id, text);
+        this._type = "dropdown";
+        this._optionList = optionList;
+        this.create();
+        this.attributes();
+        this.append();
+    }
+
+    create() {
+        super.create();
+        this._input = document.createElement('select');
+        this._options = [];
+        for (let i = 0; i < this._optionList.length; i++) {
+            this._options[i] = document.createElement('option');
+        }
+    }
+
+    attributes() {
+        super.attributes();
+        this._div.classList.add('dropdownInput');
+        for (let i = 0; i < this._options.length; i++) {
+            let option = this._options[i];
+            let optionName = this._optionList[i];
+            option.setAttribute('value', optionName);
+            option.innerHTML = optionName.charAt(0).toUpperCase() + optionName.slice(1);
+        }
+    }
+
+    append() {
+        super.append();
+        for (let i = 0; i < this._options.length; i++) {
+            this._input.appendChild(this._options[i]);
+        }
+    }
+
+    get value() {
+        return this._input.value;
+    }
+}
 //Global variables
 
 const questions = [];
@@ -507,7 +554,8 @@ function outputCode() {
             let resultHead = document.getElementById('resultHead');
             let resultBody = document.getElementById('resultBody');
             resultHead.innerHTML = '${result.text}';
-            resultHead.setAttribute('style', 'font-size: ${result.textSize}px;');
+            resultHead.style.fontSize =  '${result.textSize}';
+            resultHead.style.fontFamily = '${result.textFont}';
             resultBody.innerHTML = '${result.detail}';
         }
         `;
@@ -519,7 +567,8 @@ function outputCode() {
         let question = questions[i];
         let header = document.createElement('h1');
         header.innerHTML = question.text;
-        header.setAttribute('style', `font-size:${question.textSize}px;`);
+        header.style.fontSize = question.textSize;
+        header.style.fontFamily = question.textFont;
         let form = document.createElement('form');
         body.appendChild(header);
         body.appendChild(form);
@@ -529,8 +578,9 @@ function outputCode() {
             let button = document.createElement('button');
             button.setAttribute('type', 'button');
             button.setAttribute('onclick', `setScore(${i}, ${option.value})`);
-            button.setAttribute('style', `font-size:${option.textSize}px;`);
-            button.classList += 'quiz ';
+            button.style.fontSize = option.textSize;
+            button.style.fontFamily = option.textFont;
+            button.classList.add('quiz');
             button.innerHTML = option.text;
             form.appendChild(button);
         }
@@ -541,7 +591,7 @@ function outputCode() {
     doneButton.setAttribute('type', 'button');
     doneButton.innerHTML = 'Get Result';
     doneButton.setAttribute('onclick', 'finalScore()');
-    doneButton.classList += 'quiz ';
+    doneButton.classList.add('quiz');
     body.appendChild(doneButton);
 
     let resultHead = document.createElement('h1');
