@@ -16,7 +16,7 @@ label {
     margin-bottom: 3px;
 }
 
-input[type='submit'] {
+button:not(.quiz) {
     font-family: arial,helvetica,sans-serif;
     color: white;
     border-radius: 25px;
