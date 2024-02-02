@@ -31,9 +31,6 @@ class QuizElement {
         this._removeButton.setAttribute('type', 'button');
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
         this._removeButton.innerHTML = `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`;
-        //this._removeButton.setAttribute('onmouseover', `${this.globalLocation}.removeHover(true)`);
-        //this._removeButton.setAttribute('onmouseout', `${this.globalLocation}.removeHover(false)`);
-
         //class attributes
         this._div.classList += `${this._type} `
         this._div.classList += 'elementDiv ';
@@ -102,15 +99,7 @@ class QuizElement {
             this.num = this._num;
         }
     }
-    /*
-    removeHover(on) {
-        if (on) {
-            this._removeButton.setAttribute('value', `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`);
-        } else if (!on) {
-            this._removeButton.setAttribute('value', '--');
-        }
-    }
-    */
+    
     //remove
 
     remove() {
