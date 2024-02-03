@@ -1,3 +1,8 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
 h1, h3, h4, label {
     font-family: arial,helvetica,sans-serif;
 }
@@ -113,5 +118,20 @@ select{
 
 .simpleInputDiv{
     vertical-align:top;
+}
+
+#menu{
+    position: fixed;
+    background-color: cadetblue;
+    width: 100%;
+    vertical-align:top;
+    top: 0px;
+    padding: 5px 0px 5px 5px;
+}
+#header{
+    padding-top: 10px;
+}
+#body{
+    padding: 0px 10px 0px 10px;
 }
 

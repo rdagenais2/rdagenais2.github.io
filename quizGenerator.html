@@ -14,21 +14,23 @@
     <div id="header">
         <h1 id="pageHeader">Quiz Generator</h1>
     </div>
-    <div id="interface">
-        <div id="questionDiv"></div>
-        <button type="button" onclick="addQuestion()" class="addButton">Add Question</button>
-        <div id="resultDiv"></div>
-        <button type='button' onclick='addResult()' class="addButton">Add Result</button>
-    </div>
-    <div id="outputDiv">
-        <button type="button" onclick="outputCode()" class="outputButton">Output Code</button>
-        <xmp id="outputText"></xmp>
-    </div>
-    <div id="preview"></div>
-    <div id="devtools" style="visibility: hidden;">
-        <button type="button" onclick="displayData()" class="devtool">Show Data</button>
-        <button type="button" onclick="autofill()" class="devtool">Autofill</button>
-        <button type="button" onclick="autofill(); outputCode()" class="devtool">Auto Output</button>
+    <div id="body">
+        <div id="interface">
+            <div id="questionDiv"></div>
+            <button type="button" onclick="addQuestion()" class="addButton">Add Question</button>
+            <div id="resultDiv"></div>
+            <button type='button' onclick='addResult()' class="addButton">Add Result</button>
+        </div>
+        <div id="outputDiv">
+            <button type="button" onclick="outputCode()" class="outputButton">Output Code</button>
+            <xmp id="outputText"></xmp>
+        </div>
+        <div id="preview"></div>
+        <div id="devtools" style="visibility: hidden;">
+            <button type="button" onclick="displayData()" class="devtool">Show Data</button>
+            <button type="button" onclick="autofill()" class="devtool">Autofill</button>
+            <button type="button" onclick="autofill(); outputCode()" class="devtool">Auto Output</button>
+        </div>
     </div>
 </body>
 </html>
