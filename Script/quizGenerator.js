@@ -25,9 +25,10 @@ class QuizElement {
         this._textDiv = document.createElement('div');
         this._textDataDiv = document.createElement('div');
         this._textStyleDiv = document.createElement('div');
-        this._text = new TextInput(`${this._id}Text`, 'Text');
-        this._textSize = new NumberInput(`${this._id}TextSize`, 'Text Size');
+        this._text = new SimpleInput(`${this._id}Text`, 'Text', 'text');
+        this._textSize = new SimpleInput(`${this._id}TextSize`, 'Text Size', 'number');
         this._textFont = new DropdownInput(`${this._id}TextFont`, 'Text Font', ['arial', 'helvetica', 'comic sans', 'times']);
+        this._textColor = new SimpleInput(`${this._id}TextColor`, 'Text Color', 'color');
     }
 
     setAttributes() {
@@ -61,6 +62,7 @@ class QuizElement {
         this._textDataDiv.appendChild(this._text.div);
         this._textStyleDiv.appendChild(this._textSize.div);
         this._textStyleDiv.appendChild(this._textFont.div);
+        this._textStyleDiv.appendChild(this._textColor.div);
     }
 
     //getters
@@ -86,6 +88,9 @@ class QuizElement {
     }
     get textFont() {
         return this._textFont.value;
+    }
+    get textColor() {
+        return this._textColor.value;
     }
     get parent() {
         return this._parent;
@@ -220,7 +225,7 @@ class Option extends QuizElement {
 
     createElements() {
         super.createElements();
-        this._value = new NumberInput(`${this._id}Value`, 'Value');
+        this._value = new SimpleInput(`${this._id}Value`, 'Value', 'number');
         this._valueDiv = document.createElement('div');
         this._valueDataDiv = document.createElement('div');
         this._valueStyleDiv = document.createElement('div');
@@ -285,21 +290,25 @@ class Result extends QuizElement{
         this._lowerDiv = document.createElement('div');
         this._lowerDataDiv = document.createElement('div');
         this._lowerStyleDiv = document.createElement('div');
-        this._lower = new NumberInput(`${this._id}Lower`, 'Lower Value');
+        this._lower = new SimpleInput(`${this._id}Lower`, 'Lower Value', 'number');
         this._upperDiv = document.createElement('div');
         this._upperDataDiv = document.createElement('div');
         this._upperStyleDiv = document.createElement('div');
-        this._upper = new NumberInput(`${this._id}Upper`, 'Upper Value');
+        this._upper = new SimpleInput(`${this._id}Upper`, 'Upper Value', 'number');
         this._detailDiv = document.createElement('div');
         this._detailDataDiv = document.createElement('div');
         this._detailStyleDiv = document.createElement('div');
         this._detail = new TextArea(`${this._id}Detail`, 'Detail', 5, 50);
+        this._detailSize = new SimpleInput(`${this._id}DetailSize`, 'Detail Size', 'number');
+        this._detailFont = new DropdownInput(`${this._id}DetailFont`, 'Detail Font', ['arial', 'helvetica', 'comic sans', 'times']);
+        this._detailColor = new SimpleInput(`${this._id}DetailColor`, 'Detail Color', 'color');
     }
 
     setAttributes() {
         super.setAttributes();
         this.setIds();
         this._textSize.value = '32';
+        this._detailSize.value = '16';
         this._lowerDiv.classList.add('propertyDiv');
         this._lowerDataDiv.classList.add('dataDiv');
         this._lowerStyleDiv.classList.add('styleDiv');
@@ -329,6 +338,9 @@ class Result extends QuizElement{
         this._lowerDataDiv.appendChild(this._lower.div);
         this._upperDataDiv.appendChild(this._upper.div);
         this._detailDataDiv.appendChild(this._detail.div);
+        this._detailStyleDiv.appendChild(this._detailSize.div);
+        this._detailStyleDiv.appendChild(this._detailFont.div);
+        this._detailStyleDiv.appendChild(this._detailColor.div);
     }
 
     //getters
@@ -341,6 +353,15 @@ class Result extends QuizElement{
     }
     get detail() {
         return this._detail.value;
+    }
+    get detailSize() {
+        return this._detailSize.value;
+    }
+    get detailFont() {
+        return this._detailFont.value;
+    }
+    get detailColor() {
+        return this._detailColor.value;
     }
 
     //setters
@@ -358,7 +379,7 @@ class Result extends QuizElement{
         super.num = num;
         this._lower.id = `${this._id}Lower`;
         this._upper.id = `${this._id}Upper`;
-        this._detail.id = `${this._id}Detail`
+        this._detail.id = `${this._id}Detail`;
     }
 
     //update
@@ -404,10 +425,10 @@ class InputArea {
     }
 }
 
-class TextInput extends InputArea {
-    constructor(id, text) {
+class SimpleInput extends InputArea {
+    constructor(id, text, type) {
         super(id, text);
-        this._type = "text";
+        this._type = type;
         this.create();
         this.attributes();
         this.append();
@@ -419,32 +440,10 @@ class TextInput extends InputArea {
     attributes() {
         super.attributes();
         this._input.setAttribute('type', this._type);
-        this._div.classList.add('textInput');
-    }
-    get value() {
-        return this._input.value;
-    }
-    set value(value) {
-        this._input.setAttribute('value', value);
-    }
-}
+        this._input.classList.add('simpleInput');
+        this._div.classList.add(`${this._type}Input`);
+        this._div.classList.add('simpleInputDiv');
 
-class NumberInput extends InputArea {
-    constructor(id, text) {
-        super(id, text);
-        this._type = "number";
-        this.create();
-        this.attributes();
-        this.append();
-    }
-    create() {
-        super.create();
-        this._input = document.createElement('input');
-    }
-    attributes() {
-        super.attributes();
-        this._input.setAttribute('type', this._type);
-        this._div.classList.add('numberInput');
     }
     get value() {
         return this._input.value;
@@ -591,7 +590,11 @@ function outputCode() {
             resultHead.innerHTML = '${result.text}';
             resultHead.style.fontSize =  '${result.textSize}';
             resultHead.style.fontFamily = '${result.textFont}';
+            resultHead.style.color = '${result.textColor}';
             resultBody.innerHTML = '${result.detail}';
+            resultBody.style.fontSize = '${result.detailSize}';
+            resultBody.style.fontFamily = '${result.detailFont}';
+            resultBody.style.color = '${result.detailColor}';
         }
         `;
     }
@@ -604,6 +607,7 @@ function outputCode() {
         header.innerHTML = question.text;
         header.style.fontSize = question.textSize;
         header.style.fontFamily = question.textFont;
+        header.style.color = question.textColor;
         let form = document.createElement('form');
         body.appendChild(header);
         body.appendChild(form);
@@ -615,6 +619,7 @@ function outputCode() {
             button.setAttribute('onclick', `setScore(${i}, ${option.value})`);
             button.style.fontSize = option.textSize;
             button.style.fontFamily = option.textFont;
+            button.style.color = option.textColor;
             button.classList.add('quiz');
             button.innerHTML = option.text;
             form.appendChild(button);
