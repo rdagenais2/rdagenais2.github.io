@@ -27,7 +27,7 @@ class QuizElement {
         this._textStyleDiv = document.createElement('div');
         this._text = new TextInput(`${this._id}Text`, 'Text');
         this._textSize = new NumberInput(`${this._id}TextSize`, 'Text Size');
-        this._textFont = new DropdownInput(`${this._id}TextFont`, 'Text Font', ['arial', 'helvetica', 'comic sans']);
+        this._textFont = new DropdownInput(`${this._id}TextFont`, 'Text Font', ['arial', 'helvetica', 'comic sans', 'times']);
     }
 
     setAttributes() {
@@ -221,6 +221,9 @@ class Option extends QuizElement {
     createElements() {
         super.createElements();
         this._value = new NumberInput(`${this._id}Value`, 'Value');
+        this._valueDiv = document.createElement('div');
+        this._valueDataDiv = document.createElement('div');
+        this._valueStyleDiv = document.createElement('div');
     }
 
     setAttributes() {
@@ -231,7 +234,9 @@ class Option extends QuizElement {
         this._textSize.value = '16';
 
         //class attributes
-       
+        this._valueDiv.classList.add('propertyDiv');
+        this._valueDataDiv.classList.add('dataDiv');
+        this._valueStyleDiv.classList.add('styleDiv');
     }
 
     setIds() {
@@ -240,7 +245,10 @@ class Option extends QuizElement {
 
     appendChildren() {
         super.appendChildren();
-        this._form.appendChild(this._value.div);
+        this._form.appendChild(this._valueDiv);
+        this._valueDiv.appendChild(this._valueDataDiv);
+        this._valueDiv.appendChild(this._valueStyleDiv);
+        this._valueDataDiv.appendChild(this._value.div);
     }
 
     //getters
@@ -274,8 +282,17 @@ class Result extends QuizElement{
 
     createElements() {
         super.createElements();
+        this._lowerDiv = document.createElement('div');
+        this._lowerDataDiv = document.createElement('div');
+        this._lowerStyleDiv = document.createElement('div');
         this._lower = new NumberInput(`${this._id}Lower`, 'Lower Value');
+        this._upperDiv = document.createElement('div');
+        this._upperDataDiv = document.createElement('div');
+        this._upperStyleDiv = document.createElement('div');
         this._upper = new NumberInput(`${this._id}Upper`, 'Upper Value');
+        this._detailDiv = document.createElement('div');
+        this._detailDataDiv = document.createElement('div');
+        this._detailStyleDiv = document.createElement('div');
         this._detail = new TextArea(`${this._id}Detail`, 'Detail', 5, 50);
     }
 
@@ -283,6 +300,15 @@ class Result extends QuizElement{
         super.setAttributes();
         this.setIds();
         this._textSize.value = '32';
+        this._lowerDiv.classList.add('propertyDiv');
+        this._lowerDataDiv.classList.add('dataDiv');
+        this._lowerStyleDiv.classList.add('styleDiv');
+        this._upperDiv.classList.add('propertyDiv');
+        this._upperDataDiv.classList.add('dataDiv');
+        this._upperStyleDiv.classList.add('styleDiv');
+        this._detailDiv.classList.add('propertyDiv');
+        this._detailDataDiv.classList.add('dataDiv');
+        this._detailStyleDiv.classList.add('styleDiv');
     }
 
     setIds() {
@@ -291,9 +317,18 @@ class Result extends QuizElement{
 
     appendChildren() {
         super.appendChildren();
-        this._form.appendChild(this._lower.div);
-        this._form.appendChild(this._upper.div);
-        this._form.appendChild(this._detail.div);
+        this._form.appendChild(this._lowerDiv);
+        this._form.appendChild(this._upperDiv);
+        this._form.appendChild(this._detailDiv);
+        this._lowerDiv.appendChild(this._lowerDataDiv);
+        this._lowerDiv.appendChild(this._lowerStyleDiv);
+        this._upperDiv.appendChild(this._upperDataDiv);
+        this._upperDiv.appendChild(this._upperStyleDiv);
+        this._detailDiv.appendChild(this._detailDataDiv);
+        this._detailDiv.appendChild(this._detailStyleDiv);
+        this._lowerDataDiv.appendChild(this._lower.div);
+        this._upperDataDiv.appendChild(this._upper.div);
+        this._detailDataDiv.appendChild(this._detail.div);
     }
 
     //getters
