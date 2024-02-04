@@ -21,7 +21,7 @@ label {
     margin-bottom: 3px;
 }
 
-button:not(.quiz, .styleButton) {
+button:not(.quiz, .styleButton, .exampleButton) {
     font-family: arial,helvetica,sans-serif;
     color: white;
     border-radius: 25px;
@@ -88,6 +88,7 @@ button:not(.quiz, .styleButton) {
 #exitButton{
     color: black !important;
     background-color: grey !important;
+    float: left;
 }
 
 .styleButton{
@@ -127,13 +128,11 @@ select{
 
 #popup{
     background-color: white;
-    width: 46vw;
     height: 60vh;
     position:fixed;
     top: 50vh;
     left: 50vw;
     margin-top: -23vh;
-    margin-left: -25vw;
     border-radius: 5%;
     padding: 10px 10px 10px 10px;
 
@@ -154,8 +153,27 @@ select{
     border-color: black;
     position: relative;
     height:58vh;
-    width: 15vw;
     left:1vw;
+}
+
+.interfaceContent{
+    border: solid;
+    border-color: black;
+    height:58vh;
+    position: relative;
+    float: left;
+}
+
+.exampleContent{
+    border: solid;
+    border-color:black;
+    height:58vh;
+    float:right;
+}
+
+.exampleButton{
+    position: relative;
+    top:29vh;
 }
 
 #menu{
