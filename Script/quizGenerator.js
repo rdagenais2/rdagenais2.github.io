@@ -213,10 +213,7 @@ class Option extends QuizElement {
 
     createElements() {
         super.createElements();
-        this._value = new SimpleInput(`${this._id}Value`, 'Value', 'number');
-        this._valueDiv = document.createElement('div');
-        this._valueDataDiv = document.createElement('div');
-        this._valueStyleDiv = document.createElement('div');
+        this._value = new NumberProperty(`${this._id}Value`, 'Value', this);
     }
 
     setAttributes() {
@@ -225,11 +222,6 @@ class Option extends QuizElement {
         //base attributes
         this._removeButton.setAttribute('onclick', `questions[${this._parent.num}].removeOption(${this._num})`);
         this._text.size = '16';
-
-        //class attributes
-        this._valueDiv.classList.add('propertyDiv');
-        this._valueDataDiv.classList.add('dataDiv');
-        this._valueStyleDiv.classList.add('styleDiv');
     }
 
     setIds() {
@@ -238,10 +230,7 @@ class Option extends QuizElement {
 
     appendChildren() {
         super.appendChildren();
-        this._form.appendChild(this._valueDiv);
-        this._valueDiv.appendChild(this._valueDataDiv);
-        this._valueDiv.appendChild(this._valueStyleDiv);
-        this._valueDataDiv.appendChild(this._value.div);
+        this._form.appendChild(this._value.div);
     }
 
     //getters
@@ -251,6 +240,9 @@ class Option extends QuizElement {
     }
     get value() {
         return this._value.value;
+    }
+    get buttonStyle(){
+        return this._value.buttonStyle;
     }
 
     //setters
@@ -275,14 +267,8 @@ class Result extends QuizElement{
 
     createElements() {
         super.createElements();
-        this._lowerDiv = document.createElement('div');
-        this._lowerDataDiv = document.createElement('div');
-        this._lowerStyleDiv = document.createElement('div');
-        this._lower = new SimpleInput(`${this._id}Lower`, 'Lower Value', 'number');
-        this._upperDiv = document.createElement('div');
-        this._upperDataDiv = document.createElement('div');
-        this._upperStyleDiv = document.createElement('div');
-        this._upper = new SimpleInput(`${this._id}Upper`, 'Upper Value', 'number');
+        this._lower = new NumberProperty(`${this._id}Lower`, 'Lower Value', this);
+        this._upper = new NumberProperty(`${this._id}Upper`, 'Upper Value', this);
         this._detail = new TextProperty(`${this._id}Detail`, 'Detail', 'textArea');
     }
 
@@ -291,12 +277,6 @@ class Result extends QuizElement{
         this.setIds();
         this._text.size = '32';
         this._detail.size = '16';
-        this._lowerDiv.classList.add('propertyDiv');
-        this._lowerDataDiv.classList.add('dataDiv');
-        this._lowerStyleDiv.classList.add('styleDiv');
-        this._upperDiv.classList.add('propertyDiv');
-        this._upperDataDiv.classList.add('dataDiv');
-        this._upperStyleDiv.classList.add('styleDiv');
     }
 
     setIds() {
@@ -305,15 +285,9 @@ class Result extends QuizElement{
 
     appendChildren() {
         super.appendChildren();
-        this._form.appendChild(this._lowerDiv);
-        this._form.appendChild(this._upperDiv);
+        this._form.appendChild(this._lower.div);
+        this._form.appendChild(this._upper.div);
         this._form.appendChild(this._detail.div);
-        this._lowerDiv.appendChild(this._lowerDataDiv);
-        this._lowerDiv.appendChild(this._lowerStyleDiv);
-        this._upperDiv.appendChild(this._upperDataDiv);
-        this._upperDiv.appendChild(this._upperStyleDiv);
-        this._lowerDataDiv.appendChild(this._lower.div);
-        this._upperDataDiv.appendChild(this._upper.div);
     }
 
     //getters
@@ -370,6 +344,10 @@ class PropertyBar {
         this._propertyDiv.appendChild(this._dataDiv);
         this._propertyDiv.appendChild(this._styleDiv);
     }
+
+    get div(){
+        return this._propertyDiv;
+    }
 }
 
 class TextProperty extends PropertyBar{
@@ -391,9 +369,6 @@ class TextProperty extends PropertyBar{
         this._styleDiv.appendChild(this._color.div);
     }
 
-    get div(){
-        return this._propertyDiv;
-    }
     get text(){
         return this._data.value;
     }
@@ -418,6 +393,33 @@ class TextProperty extends PropertyBar{
     }
     set color(color){
         this._color.value = color;
+    }
+}
+
+class NumberProperty extends PropertyBar{
+    constructor(id, text, parent){
+        super();
+        this._id = id;
+        this._text = text;
+        this._parent = parent;
+        this._data = new SimpleInput(this._id, this._text, 'number');
+        if(this._parent.type == "option"){
+            this._buttonStyle = new ButtonPopup(`${this._id}ButtonStyle`, 'Button Style', this._parent, 'buttonStyle', "localOption");
+            this._styleDiv.appendChild(this._buttonStyle.div);
+        }
+
+        this._dataDiv.appendChild(this._data.div);
+    }
+
+    get value(){
+        return this._data.value;
+    }
+    get buttonStyle(){
+        return this._buttonStyle;
+    }
+
+    set value(value){
+        this._data.value = value;
     }
 }
 
@@ -556,6 +558,64 @@ class DropdownInput extends InputArea {
 
     get value() {
         return this._input.value;
+    }
+}
+
+class PropertyPopup extends InputArea{
+    constructor(id, text, parent, accessor){
+        super(id, text);
+        this._parent = parent;
+        this._accessor = accessor;
+        this._popupWindow = document.getElementById('popup');
+        this._popupBackground = document.getElementById('popupBackground');
+        this._popupContent = document.getElementById('popupContent');
+        this.create();
+        this.attributes();
+        this.append();
+    }
+    create(){
+        super.create();
+        this._input = document.createElement('button');
+        this._desiredContent = document.createElement('div');
+    }
+    attributes(){
+        super.attributes();
+        this._input.setAttribute('type', 'button');
+        this._input.setAttribute('onclick', `${this._parent.globalLocation}.${this._accessor}.popup()`);
+        this._input.classList.add('styleButton');
+        this._input.innerHTML = 'Open Menu';
+    }
+
+    popup(){
+        this._popupWindow.style.display = "";
+        this._popupBackground.style.display = "";
+    }
+}
+
+class ButtonPopup extends PropertyPopup{
+    constructor(id, text, parent, accessor, type){
+        super(id, text, parent, accessor);
+        this._type = type;
+        if(this._type == "localOption"){
+            this._width = new SimpleInput(`${this._id}Width`, 'Button Width', 'number');
+            this._height = new SimpleInput(`${this._id}Height`, 'Button Height', 'number');
+            this._buttonColor = new SimpleInput(`${this._id}ButtonColor`, 'Button Color', 'color');
+            this._showBorder = new SimpleInput(`${this._id}Border`, 'Show Border', 'checkbox');
+        }
+        this._popupContent.appendChild(this._width.div);
+        this._popupContent.appendChild(this._height.div);
+        this._popupContent.appendChild(this._buttonColor.div);
+        this._popupContent.appendChild(this._showBorder.div);
+    }
+
+    get width(){
+        return this._width.value;
+    }
+    get height(){
+        return this._height.value;
+    }
+    get color(){
+        return this._color.value;
     }
 }
 //Global variables

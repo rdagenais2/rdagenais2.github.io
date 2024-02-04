@@ -21,15 +21,11 @@ label {
     margin-bottom: 3px;
 }
 
-button:not(.quiz) {
+button:not(.quiz, .styleButton) {
     font-family: arial,helvetica,sans-serif;
     color: white;
     border-radius: 25px;
     border: none;
-}
-
-.propertyDiv{
-
 }
 
 .dataDiv{
@@ -37,7 +33,6 @@ button:not(.quiz) {
 }
 
 .styleDiv{
-    display:inline-block;
     float: right;
 }
 
@@ -90,6 +85,16 @@ button:not(.quiz) {
     background-color: dimgrey;
 }
 
+.exitButton{
+    color: black !important;
+    background-color: grey !important;
+}
+
+.styleButton{
+    width: 170px;
+    height: 21px;
+}
+
 .elementDiv{
     border: ridge;
     border-color: grey;
@@ -118,6 +123,39 @@ select{
 
 .simpleInputDiv{
     vertical-align:top;
+}
+
+#popup{
+    background-color: white;
+    width: 46vw;
+    height: 60vh;
+    position:fixed;
+    top: 50vh;
+    left: 50vw;
+    margin-top: -23vh;
+    margin-left: -25vw;
+    border-radius: 5%;
+    padding: 10px 10px 10px 10px;
+
+}
+
+#popupBackground{
+    position:fixed;
+    height:100%;
+    width:100%;
+    top:0px;
+    left:0px;
+    background-color: lightslategray;
+    opacity:0.75;
+}
+
+#popupContent{
+    border: solid;
+    border-color: black;
+    position: relative;
+    height:58vh;
+    width: 15vw;
+    left:1vw;
 }
 
 #menu{
