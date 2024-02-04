@@ -85,7 +85,7 @@ button:not(.quiz, .styleButton) {
     background-color: dimgrey;
 }
 
-.exitButton{
+#exitButton{
     color: black !important;
     background-color: grey !important;
 }

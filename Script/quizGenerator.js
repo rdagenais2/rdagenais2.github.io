@@ -485,6 +485,9 @@ class SimpleInput extends InputArea {
     get value() {
         return this._input.value;
     }
+    get input(){
+        return this._input;
+    }
     set value(value) {
         this._input.setAttribute('value', value);
     }
@@ -569,6 +572,7 @@ class PropertyPopup extends InputArea{
         this._popupWindow = document.getElementById('popup');
         this._popupBackground = document.getElementById('popupBackground');
         this._popupContent = document.getElementById('popupContent');
+        this._exitButton = document.getElementById('exitButton');
         this.create();
         this.attributes();
         this.append();
@@ -589,6 +593,13 @@ class PropertyPopup extends InputArea{
     popup(){
         this._popupWindow.style.display = "";
         this._popupBackground.style.display = "";
+        this._exitButton.setAttribute('onclick', `${this._parent.globalLocation}.${this._accessor}.unpopup()`);
+    }
+
+    unpopup(){
+        this._popupWindow.style.display = "none";
+        this._popupBackground.style.display = "none";
+        this._popupContent.removeChild(this._desiredContent);
     }
 }
 
@@ -602,20 +613,37 @@ class ButtonPopup extends PropertyPopup{
             this._buttonColor = new SimpleInput(`${this._id}ButtonColor`, 'Button Color', 'color');
             this._showBorder = new SimpleInput(`${this._id}Border`, 'Show Border', 'checkbox');
         }
-        this._popupContent.appendChild(this._width.div);
-        this._popupContent.appendChild(this._height.div);
-        this._popupContent.appendChild(this._buttonColor.div);
-        this._popupContent.appendChild(this._showBorder.div);
+        this._width.value = 100;
+        this._height.value = 50;
+        this._buttonColor.value = "#FFFFFF";
+        this._showBorder.input.checked = true;
+
+        this._desiredContent.appendChild(this._width.div);
+        this._desiredContent.appendChild(this._height.div);
+        this._desiredContent.appendChild(this._buttonColor.div);
+        this._desiredContent.appendChild(this._showBorder.div);
+    }
+
+    popup(){
+        super.popup();
+        this._popupContent.appendChild(this._desiredContent);
     }
 
     get width(){
-        return this._width.value;
+        return this._width.value + "px";
     }
     get height(){
-        return this._height.value;
+        return this._height.value + "px";
     }
     get color(){
-        return this._color.value;
+        return this._buttonColor.value;
+    }
+    get border(){
+        if(this._showBorder.input.checked){
+            return "";
+        }else{
+            return "none";
+        }
     }
 }
 //Global variables
@@ -715,6 +743,10 @@ function outputCode() {
             button.style.fontSize = option.textSize;
             button.style.fontFamily = option.textFont;
             button.style.color = option.textColor;
+            button.style.height = option.buttonStyle.height;
+            button.style.width = option.buttonStyle.width;
+            button.style.backgroundColor = option.buttonStyle.color;
+            button.style.border = option.buttonStyle.border;
             button.classList.add('quiz');
             button.innerHTML = option.text;
             form.appendChild(button);
