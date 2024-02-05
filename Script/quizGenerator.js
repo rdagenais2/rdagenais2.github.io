@@ -349,6 +349,15 @@ class Result extends QuizElement{
     get detailColor() {
         return this._detail.color;
     }
+    get detailBold(){
+        return this._detail.bold;
+    }
+    get detailItalic(){
+        return this._detail.italic;
+    }
+    get detailUnderline(){
+        return this._detail.underline;
+    }
 
     //setters
 
@@ -360,6 +369,24 @@ class Result extends QuizElement{
     }
     set detail(detail) {
         this._detail.text = detail;
+    }
+    set detailSize(size){
+        this._detail.size = size;
+    }
+    set detailFont(font){
+        this._detail.font = font;
+    }
+    set detailColor(color){
+        this._detail.color = color;
+    }
+    set detailBold(bold){
+        this._detail.bold = bold;
+    }
+    set detailItalic(italic){
+        this._detail.italic = italic;
+    }
+    set detailUnderline(underline){
+        this._detail.underline = underline;
     }
     setNum(num) {
         super.num = num;
@@ -510,12 +537,14 @@ class StyleProperty extends PropertyBar{
             this._questionTextStyle = new TextPopup(`${this._id}QuestionTextStyle`, 'Question Text Style', this._parent, 'questionTextStyle', 'questions');
             this._optionTextStyle = new TextPopup(`${this._id}OptionTextStyle`, 'Option Text Style', this._parent, 'optionTextStyle', 'options');
             this._resultTextStyle = new TextPopup(`${this._id}ResultTextStyle`, 'Result Text Style', this._parent, 'resultTextStyle', 'results');
+            this._detailTextStyle = new TextPopup(`${this._id}DetailTextStyle`, 'Detail Text Style', this._parent, 'detailTextStyle', 'details');
             this._buttonStyle = new ButtonPopup(`${this._id}ButtonStyle`, 'Option Button Style', this._parent, 'buttonStyle', 'globalOption');
             this._styleDiv.appendChild(this._questionTextStyle.div);
         }
         this._styleDiv.appendChild(this._optionTextStyle.div);
         if(this._parent == null){
             this._styleDiv.appendChild(this._resultTextStyle.div);
+            this._styleDiv.appendChild(this._detailTextStyle.div);
         }
         this._styleDiv.appendChild(this._buttonStyle.div);
     }
@@ -531,6 +560,9 @@ class StyleProperty extends PropertyBar{
     }
     get questionTextStyle(){
         return this._questionTextStyle;
+    }
+    get detailTextStyle(){
+        return this._detailTextStyle;
     }
 }
 
@@ -890,7 +922,7 @@ class TextPopup extends PropertyPopup{
         this._underline = new SimpleInput(`${this._id}Underline`, 'Underline', 'checkbox');
         this._finalizeButton = document.createElement('button');
 
-        if(this._type == "options"){
+        if(this._type == "options" || this._type == "details"){
             this._size.value = "16";
             this._color.value = "#000000";
             this._bold.value = false;
@@ -967,6 +999,16 @@ class TextPopup extends PropertyPopup{
                 result.italic = this.italic;
                 result.underline = this.underline;
             }
+        }else if(this._type == "details"){
+            for(let i = 0; i < results.length; i++){
+                let result = results[i];
+                result.detailSize = this.size;
+                result.detailFont = this.font;
+                result.detailColor = this.color;
+                result.detailBold = this.bold;
+                result.detailItalic = this.italic;
+                result.detailUnderline = this.underline;
+            }
         }
         if(!auto){  
             this.unpopup();
@@ -1028,7 +1070,7 @@ const questions = [];
 var questionNum = 0;
 const results = [];
 var resultNum = 0;
-var questionTextStyle, optionTextStyle, resultTextStyle, buttonStyle;
+var questionTextStyle, optionTextStyle, resultTextStyle, detailTextStyle, buttonStyle;
 
 //Global functions
 function onloadOps(){
@@ -1037,6 +1079,7 @@ function onloadOps(){
     questionTextStyle = globalPropertyBar.questionTextStyle;
     optionTextStyle = globalPropertyBar.optionTextStyle;
     resultTextStyle = globalPropertyBar.resultTextStyle;
+    detailTextStyle = globalPropertyBar.detailTextStyle;
     buttonStyle = globalPropertyBar.buttonStyle;
 
     globalStyles.append(globalPropertyBar.div);
