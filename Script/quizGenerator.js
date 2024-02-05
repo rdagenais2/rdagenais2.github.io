@@ -164,6 +164,7 @@ class Question extends QuizElement{
         super.setAttributes();
         //base attributes
         this._text.size = '24';
+        this._text.bold = true;
         this._optionButton.setAttribute('type', 'button');
         this._optionButton.innerHTML = 'Add Option';
         this._optionButton.setAttribute('onclick', `questions[${this._num}].addOption()`);
@@ -314,6 +315,7 @@ class Result extends QuizElement{
         this.setIds();
         this._text.size = '32';
         this._detail.size = '16';
+        this._text.bold = true;
     }
 
     setIds() {
@@ -944,6 +946,16 @@ class TextPopup extends PropertyPopup{
             for(let i = 0; i < questions.length; i++){
                 let question = questions[i];
                 question.textStyle.style = this.style;
+            }
+        }else if(this._type == "questions"){
+            for(let i = 0; i < questions.length; i++){
+                let question = questions[i];
+                question.size = this.size;
+                question.font = this.font;
+                question.color = this.color;
+                question.bold = this.bold;
+                question.italic = this.italic;
+                question.underline = this.underline;
             }
         }
         if(!auto){  
