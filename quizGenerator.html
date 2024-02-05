@@ -5,7 +5,7 @@
     <script src="Script/quizGenerator.js"></script>
     <link rel="stylesheet" href="Style/quizGenerator.css">
 </head>
-<body onload="showDevtools()">
+<body onload="onloadOps()">
     <div id="menu">
         <a href="index.html" class="menuButton">
             <button type="button"  class="nav">Home</button>
@@ -22,6 +22,8 @@
             </div>
         </div>
         <div id="interface">
+            <div id="globalStyleDiv">
+            </div>
             <div id="questionDiv"></div>
             <button type="button" onclick="addQuestion()" class="addButton">Add Question</button>
             <div id="resultDiv"></div>
