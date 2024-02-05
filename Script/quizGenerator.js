@@ -80,6 +80,15 @@ class QuizElement {
     get textColor() {
         return this._text.color;
     }
+    get bold(){
+        return this._text.bold;
+    }
+    get italic(){
+        return this._text.italic;
+    }
+    get underline(){
+        return this._text.underline;
+    }
     get parent() {
         return this._parent;
     }
@@ -363,10 +372,16 @@ class TextProperty extends PropertyBar{
         this._size = new SimpleInput(`${this._id}Size`, `${this._text} Size`, 'number');
         this._font = new DropdownInput(`${this._id}Font`, `${this._text} Font`, ['arial', 'helvetica', 'comic sans', 'times']);
         this._color = new SimpleInput(`${this._id}Color`, `${this._text} Color`, 'color');
+        this._bold = new SimpleInput(`${this._id}Bold`, 'Bold', 'checkbox');
+        this._italic = new SimpleInput(`${this._id}Italic`, 'Italic', 'checkbox');
+        this._underline = new SimpleInput(`${this._id}Underline`, 'Underline', 'checkbox');
         this._dataDiv.appendChild(this._data.div);
         this._styleDiv.appendChild(this._size.div);
         this._styleDiv.appendChild(this._font.div);
         this._styleDiv.appendChild(this._color.div);
+        this._styleDiv.appendChild(this._bold.div);
+        this._styleDiv.appendChild(this._italic.div);
+        this._styleDiv.appendChild(this._underline.div);
     }
 
     get text(){
@@ -380,6 +395,24 @@ class TextProperty extends PropertyBar{
     }
     get color(){
         return this._color.value;
+    }
+    get bold(){
+        if(this._bold.input.checked){
+            return "bold";
+        }
+        return "normal";
+    }
+    get italic(){
+        if(this._italic.input.checked){
+            return "italic";
+        }
+        return "normal";
+    }
+    get underline(){
+        if(this._underline.input.checked){
+            return "underline";
+        }
+        return "none";
     }
 
     set text(text){
@@ -676,6 +709,9 @@ class ButtonPopup extends PropertyPopup{
         this._exampleButton.style.fontFamily = this._parent.textFont;
         this._exampleButton.style.fontSize = this._parent.textSize;
         this._exampleButton.style.color = this._parent.textColor;
+        this._exampleButton.style.fontWeight = this._parent.bold;
+        this._exampleButton.style.fontStyle = this._parent.italic;
+        this._exampleButton.style.textDecoration = this._parent.underline;
     }
 
     get width(){
@@ -783,6 +819,9 @@ function outputCode() {
         header.style.fontSize = question.textSize;
         header.style.fontFamily = question.textFont;
         header.style.color = question.textColor;
+        header.style.fontWeight = question.bold;
+        header.style.fontStyle = question.italic;
+        header.style.textDecoration = question.underline;
         let form = document.createElement('form');
         body.appendChild(header);
         body.appendChild(form);
@@ -795,6 +834,9 @@ function outputCode() {
             button.style.fontSize = option.textSize;
             button.style.fontFamily = option.textFont;
             button.style.color = option.textColor;
+            button.style.fontWeight = option.bold;
+            button.style.fontStyle = option.italic;
+            button.style.textDecoration = option.underline;
             button.style.height = option.buttonStyle.height;
             button.style.width = option.buttonStyle.width;
             button.style.backgroundColor = option.buttonStyle.color;
