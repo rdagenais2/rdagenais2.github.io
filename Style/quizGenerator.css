@@ -21,19 +21,25 @@ label {
     margin-bottom: 3px;
 }
 
-button:not(.quiz, .styleButton, .exampleButton) {
+button:not(.quiz, .styleButton, .exampleButton, .finalizeButton) {
     font-family: arial,helvetica,sans-serif;
     color: white;
     border-radius: 25px;
     border: none;
 }
 
+.propertyDiv{
+    display: flex;
+    flex-direction: row;
+}
+
 .dataDiv{
-    display:inline-block;
+    margin-right: auto;
 }
 
 .styleDiv{
-    float: right;
+    margin-left: auto;
+    order: 2;
 }
 
 .menuButton{
@@ -174,6 +180,12 @@ select{
 .exampleButton{
     position: relative;
     top:29vh;
+}
+
+.finalizeButton{
+    position: absolute;
+    bottom:1vh;
+    left:2vh;
 }
 
 #menu{

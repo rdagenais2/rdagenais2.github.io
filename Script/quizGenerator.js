@@ -142,6 +142,7 @@ class Question extends QuizElement{
         super.createElements();
         this._optionButton = document.createElement('button');
         this._optionDiv = document.createElement('div');
+        this._buttonStyle = new StyleProperty(`${this._id}Style`, 'Button Style', this);
     }
 
     setAttributes() {
@@ -165,6 +166,7 @@ class Question extends QuizElement{
 
     appendChildren() {
         super.appendChildren();
+        this._div.appendChild(this._buttonStyle.div);
         this._div.appendChild(this._optionDiv);
         this._div.appendChild(this._optionButton);
     }
@@ -176,6 +178,12 @@ class Question extends QuizElement{
     }
     get optionNum() {
         return this._optionNum;
+    }
+    get options(){
+        return this._options;
+    }
+    get buttonStyle(){
+        return this._buttonStyle.buttonStyle;
     }
 
     getOption(i) {
@@ -264,6 +272,9 @@ class Option extends QuizElement {
         this._removeButton.setAttribute('onclick', `questions[${this._parent.num}].removeOption(${this._num})`);
         this._value.id = `${this._id}Value`;
     }
+    set buttonStyle(style){
+        this._value.buttonStyle = style;
+    }
 }
 
 class Result extends QuizElement{
@@ -350,8 +361,8 @@ class PropertyBar {
         this._propertyDiv.classList.add('propertyDiv');
         this._dataDiv.classList.add('dataDiv');
         this._styleDiv.classList.add('styleDiv');
-        this._propertyDiv.appendChild(this._dataDiv);
         this._propertyDiv.appendChild(this._styleDiv);
+        this._propertyDiv.appendChild(this._dataDiv);
     }
 
     get div(){
@@ -453,6 +464,24 @@ class NumberProperty extends PropertyBar{
 
     set value(value){
         this._data.value = value;
+    }
+    set buttonStyle(style){
+        this._buttonStyle.style = style;
+    }
+}
+
+class StyleProperty extends PropertyBar{
+    constructor(id, text, parent){
+        super();
+        this._id = id;
+        this._text = text;
+        this._parent = parent;
+        this._buttonStyle = new ButtonPopup(`${this._id}ButtonStyle`, 'Button Style', this._parent, 'buttonStyle', "questionOption");
+        this._styleDiv.appendChild(this._buttonStyle.div);
+    }
+
+    get buttonStyle(){
+        return this._buttonStyle;
     }
 }
 
@@ -650,6 +679,9 @@ class ButtonPopup extends PropertyPopup{
         this._borderRadius = new SimpleInput(`${this._id}BorderRadius`, 'Border Radius', 'range');
         this._exampleContent = document.createElement('div');
         this._exampleButton = document.createElement('button');
+        if(this._type == "questionOption"){
+            this._finalizeButton = document.createElement('button');
+        }
 
         this._width.input.setAttribute('onchange', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
         this._height.input.setAttribute('onchange', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
@@ -671,12 +703,20 @@ class ButtonPopup extends PropertyPopup{
         this._borderRadius.input.max = "50";
         this._interfaceContent.classList.add('interfaceContent');
         this._exampleContent.classList.add('exampleContent');
+        if(this._type == "questionOption"){
+            this._finalizeButton.innerHTML = "Finalize Design?";
+            this._finalizeButton.setAttribute('onclick', `${this._parent.globalLocation}.buttonStyle.finalize()`);
+            this._finalizeButton.classList.add('finalizeButton');
+        }
 
         this._interfaceContent.appendChild(this._height.div);
         this._interfaceContent.appendChild(this._width.div);
         this._interfaceContent.appendChild(this._buttonColor.div);
         this._interfaceContent.appendChild(this._showBorder.div);
         this._interfaceContent.appendChild(this._borderRadius.div);
+        if(this._type == "questionOption"){
+            this._interfaceContent.appendChild(this._finalizeButton);
+        }
         this._exampleContent.appendChild(this._exampleButton);
     }
 
@@ -714,6 +754,13 @@ class ButtonPopup extends PropertyPopup{
         this._exampleButton.style.textDecoration = this._parent.underline;
     }
 
+    finalize(){
+
+        for(let i = 0; i < this._parent.options.length; i++){
+            this._parent.getOption(i).buttonStyle = this;
+        }
+    }
+
     get width(){
         return this._width.value + "px";
     }
@@ -732,6 +779,17 @@ class ButtonPopup extends PropertyPopup{
     }
     get radius(){
         return this._borderRadius.input.value + "%";
+    }
+    get data(){
+        return [this._width.value, this._height.value, this._buttonColor.value, this._showBorder.input.checked, this._borderRadius.input.value];
+    }
+    set style(style){
+        let data = style.data;
+        this._width.value = data[0];
+        this._height.value = data[1];
+        this._buttonColor.value = data[2];
+        this._showBorder.input.checked = data[3];
+        this._borderRadius.input.value = data[4];
     }
 }
 //Global variables
@@ -806,6 +864,9 @@ function outputCode() {
             resultBody.style.fontSize = '${result.detailSize}';
             resultBody.style.fontFamily = '${result.detailFont}';
             resultBody.style.color = '${result.detailColor}';
+            resultBody.style.fontWeight = '${result.bold}';
+            resultBody.style.fontStyle = '${result.italic}';
+            resultBody.style.textDecoration = '${result.underline}';
         }
         `;
     }
