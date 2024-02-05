@@ -957,6 +957,16 @@ class TextPopup extends PropertyPopup{
                 question.italic = this.italic;
                 question.underline = this.underline;
             }
+        }else if(this._type == "results"){
+            for(let i = 0; i < results.length; i++){
+                let result = results[i];
+                result.size = this.size;
+                result.font = this.font;
+                result.color = this.color;
+                result.bold = this.bold;
+                result.italic = this.italic;
+                result.underline = this.underline;
+            }
         }
         if(!auto){  
             this.unpopup();
