@@ -546,13 +546,20 @@ class SimpleInput extends InputArea {
 
     }
     get value() {
+        if(this._type == "checkbox"){
+            return this._input.checked;
+        }
         return this._input.value;
     }
     get input(){
         return this._input;
     }
     set value(value) {
-        this._input.setAttribute('value', value);
+        if(this._type == "checkbox"){
+            this._input.checked = value;
+        }else{
+            this._input.value = value;
+        }
     }
 }
 
@@ -683,11 +690,11 @@ class ButtonPopup extends PropertyPopup{
             this._finalizeButton = document.createElement('button');
         }
 
-        this._width.input.setAttribute('onchange', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
-        this._height.input.setAttribute('onchange', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
-        this._buttonColor.input.setAttribute('onchange', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
+        this._width.input.setAttribute('oninput', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
+        this._height.input.setAttribute('oninput', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
+        this._buttonColor.input.setAttribute('oninput', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
         this._showBorder.input.setAttribute('onchange', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
-        this._borderRadius.input.setAttribute('onchange', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
+        this._borderRadius.input.setAttribute('oninput', `${this._parent.globalLocation}.buttonStyle.updateButton()`);
 
         this._exampleButton.classList.add('exampleButton');
         this._exampleButton.style.textAlign = ""
@@ -781,15 +788,16 @@ class ButtonPopup extends PropertyPopup{
         return this._borderRadius.input.value + "%";
     }
     get data(){
-        return [this._width.value, this._height.value, this._buttonColor.value, this._showBorder.input.checked, this._borderRadius.input.value];
+        return [this._width.value, this._height.value, this._buttonColor.value, this._showBorder.value, this._borderRadius.value];
     }
     set style(style){
         let data = style.data;
         this._width.value = data[0];
         this._height.value = data[1];
         this._buttonColor.value = data[2];
-        this._showBorder.input.checked = data[3];
-        this._borderRadius.input.value = data[4];
+        this._showBorder.value = data[3];
+        this._borderRadius.value = data[4];
+        this.updateButton();
     }
 }
 //Global variables
