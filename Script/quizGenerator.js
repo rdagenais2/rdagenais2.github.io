@@ -25,7 +25,7 @@ class QuizElement {
         this._textDiv = document.createElement('div');
         this._textDataDiv = document.createElement('div');
         this._textStyleDiv = document.createElement('div');
-        this._text = new TextProperty(`${this._id}`, 'Text');
+        this._text = new TextProperty(`${this._id}TextProperties_`, 'Text');
     }
 
     setAttributes() {
@@ -104,7 +104,7 @@ class QuizElement {
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
         this._id = this.id;
         this._div.setAttribute('id', `${this._id}Div`);
-        this._text.id = `${this._id}Text`;
+        this._text.id = `${this._id}TextProperties_`;
     }
     set text(text) {
         this._text.text = text;
@@ -214,6 +214,8 @@ class Question extends QuizElement{
         super.num = num;
         this._optionButton.setAttribute('onclick', `questions[${super.num}].addOption()`);
         this._optionDiv.setAttribute('id', `${this._id}OptionDiv`);
+        this._styleButtons.id = this._id + "Style";
+        
         for (let i = 0; i < this._optionNum; i++) {
             this._options[i].num = i;
         }
@@ -417,14 +419,14 @@ class PropertyBar {
 }
 
 class TextProperty extends PropertyBar{
-    constructor(id, text, type="text"){
+    constructor(id, text, type="Text"){
         super();
         this._id = id;
         this._text = text;
-        if(type == "text"){
-            this._data = new SimpleInput(this._id, this._text, 'text');
+        if(type == "Text"){
+            this._data = new SimpleInput(`${this._id}Text`, this._text, 'text');
         }else if(type == "textArea"){
-            this._data = new TextArea(this._id, this._text, "5", "50");
+            this._data = new TextArea(`${this._id}Text`, this._text, "5", "50");
         }
         this._size = new SimpleInput(`${this._id}Size`, `${this._text} Size`, 'number');
         this._font = new DropdownInput(`${this._id}Font`, `${this._text} Font`, ['arial', 'helvetica', 'comic sans', 'times']);
@@ -472,6 +474,16 @@ class TextProperty extends PropertyBar{
         return "none";
     }
 
+    set id(id){
+        this._id = id;
+        this._data.id = this._id + "Text";
+        this._size.id = this._id + "Size";
+        this._font.id = this._id + "Font";
+        this._color.id = this._id + "Color";
+        this._bold.id = this._id + "Bold";
+        this._italic.id = this._id + "Italic";
+        this._underline.id = this._id + "Underline";
+    }
     set text(text){
         this._data.value = text;
     }
@@ -501,7 +513,7 @@ class NumberProperty extends PropertyBar{
         this._id = id;
         this._text = text;
         this._parent = parent;
-        this._data = new SimpleInput(this._id, this._text, 'number');
+        this._data = new SimpleInput(this._id + "Data", this._text, 'number');
         if(this._parent.type == "option"){
             this._buttonStyle = new ButtonPopup(`${this._id}ButtonStyle`, 'Button Style', this._parent, 'buttonStyle', "localOption");
             this._styleDiv.appendChild(this._buttonStyle.div);
@@ -522,6 +534,11 @@ class NumberProperty extends PropertyBar{
     }
     set buttonStyle(style){
         this._buttonStyle.style = style;
+    }
+    set id(id){
+        this._id = id;
+        this._data.id = this._id + "Data";
+        this._buttonStyle.id = this._id + "ButtonStyle";
     }
 }
 
@@ -564,6 +581,20 @@ class StyleProperty extends PropertyBar{
     get detailTextStyle(){
         return this._detailTextStyle;
     }
+
+    set id(id){
+        this._id = id;
+        if(this._parent != null && this._parent.type == "question"){
+            this._buttonStyle.id = this._id + 'ButtonStyle';
+            this._optionTextStyle.id = this._id + 'TextStyle';
+        }else if(this._parent == null){
+            this._questionTextStyle.id = this._id + 'QuestionTextStyle';
+            this._optionTextStyle.id = this._id + 'OptionTextStyle';
+            this._resultTextStyle.id = this._id + 'ResultTextStyle';
+            this._detailTextStyle.id = this._id + 'DetailTextStyle';
+            this._buttonStyle.id = this._id + 'ButtonStyle';
+        }
+    }
 }
 
 class InputArea {
@@ -598,7 +629,7 @@ class InputArea {
     //set
     set id(id) {
         this._id = id;
-        this._div.setAttribute('id', this._id);
+        this._div.setAttribute('id', this._id + "Div");
         this._label.setAttribute('for', this._id);
         this._input.setAttribute('id', this._id);
         this._input.setAttribute('name', this._id);
@@ -722,7 +753,11 @@ class PropertyPopup extends InputArea{
     constructor(id, text, parent, accessor){
         super(id, text);
         this._parent = parent;
+        this._accessorSave = accessor;
         this._accessor = accessor;
+        if(this._parent != null){
+            this._accessor = this._parent.globalLocation + "." + this._accessor;
+        }
         this._popupWindow = document.getElementById('popup');
         this._popupBackground = document.getElementById('popupBackground');
         this._popupContent = document.getElementById('popupContent');
@@ -757,15 +792,22 @@ class PropertyPopup extends InputArea{
         this._popupBackground.style.display = "none";
         this._popupContent.removeChild(this._interfaceContent);
     }
+
+    set accessor(accessor){
+        console.log("PropertyPopup " + accessor + this._id);
+        this._accessor = accessor;
+        if(this._parent != null){
+            this._accessor = this._parent.globalLocation + "." + this._accessor;
+        }
+        this._input.setAttribute('onclick', `${this._accessor}.popup()`);
+        this._exitButton.setAttribute('onclick', `${this._accessor}.unpopup()`);
+    }
 }
 
 class ButtonPopup extends PropertyPopup{
     constructor(id, text, parent, accessor, type){
         super(id, text, parent, accessor);
         this._type = type;
-        if(this._parent != null){
-            this._accessor = this._parent.globalLocation + "." + this._accessor;
-        }
 
         this._width = new SimpleInput(`${this._id}Width`, 'Button Width', 'number');
         this._height = new SimpleInput(`${this._id}Height`, 'Button Height', 'number');
@@ -806,6 +848,7 @@ class ButtonPopup extends PropertyPopup{
             this._finalizeButton.innerHTML = "Finalize Design?";
             this._finalizeButton.setAttribute('onclick', `${this._accessor}.finalize()`);
             this._finalizeButton.classList.add('finalizeButton');
+            this._finalizeButton.setAttribute('id', `${this._id}FinalizeButton`);
         }
 
         this._interfaceContent.appendChild(this._height.div);
@@ -846,9 +889,9 @@ class ButtonPopup extends PropertyPopup{
         this._exampleButton.style.marginLeft = this._width.value * -0.5 + "px";
         if(this._parent != null && this._parent.type == "option"){
             this._exampleButton.innerHTML = this._parent.text;
-            this._exampleButton.style.fontFamily = this._parent.textFont;
-            this._exampleButton.style.fontSize = this._parent.textSize;
-            this._exampleButton.style.color = this._parent.textColor;
+            this._exampleButton.style.fontFamily = this._parent.font;
+            this._exampleButton.style.fontSize = this._parent.size;
+            this._exampleButton.style.color = this._parent.color;
             this._exampleButton.style.fontWeight = this._parent.bold;
             this._exampleButton.style.fontStyle = this._parent.italic;
             this._exampleButton.style.textDecoration = this._parent.underline;
@@ -865,9 +908,10 @@ class ButtonPopup extends PropertyPopup{
             for(let i = 0; i < this._parent.options.length; i++){
                 this._parent.getOption(i).buttonStyle = this.style;
             }
-            if(!auto){
-                this.unpopup();
-            }
+            
+        }
+        if(!auto){
+            this.unpopup();
         }
     }
 
@@ -904,15 +948,35 @@ class ButtonPopup extends PropertyPopup{
             this.finalize(true);
         }
     }
+    set id(id){
+        super.id = id;
+        this._width.id = this._id + "Width";
+        this._height.id = this._id + "Height";
+        this._buttonColor.id = this._id + "ButtonColor";
+        this._showBorder.id = this._id + "Border";
+        this._borderRadius.id = this._id + "BorderRadius";
+        if(this._type == "questionOption" || this._type == "globalOption"){
+            this._finalizeButton.setAttribute('id', `${this._id}FinalizeButton`);
+        }
+        this.accessor = this._accessorSave;
+    }
+    set accessor(accessor){
+        super.accessor = accessor;
+        this._width.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._height.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._buttonColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._showBorder.input.setAttribute('onchange', `${this._accessor}.updateButton()`);
+        this._borderRadius.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        if(this._type == "questionOption" || this._type == "globalOption"){
+            this._finalizeButton.setAttribute('onclick', `${this._accessor}.finalize()`);
+        }
+    }
 }
 
 class TextPopup extends PropertyPopup{
     constructor(id, text, parent, accessor, type){
         super(id, text, parent, accessor, type);
         this._type = type;
-        if(this._parent != null){
-            this._accessor = this._parent.globalLocation + "." + this._accessor;
-        }
         
         this._size = new SimpleInput(`${this._id}Size`, `Font Size`, 'number');
         this._font = new DropdownInput(`${this._id}Font`, `Font Family`, ['arial', 'helvetica', 'comic sans', 'times']);
@@ -1063,6 +1127,20 @@ class TextPopup extends PropertyPopup{
         this.underline = style[5];
         this.finalize(true);
     }
+    set id(id){
+        super.id = id;
+        this._size.id = this._id + "Size";
+        this._font.id = this._id + "Font";
+        this._color.id = this._id + "Color";
+        this._bold.id = this._id + "Bold";
+        this._italic.id = this._id + "Italic";
+        this._underline.id = this._id + "Underline";
+        this.accessor = this._accessorSave;
+    }
+    set accessor(accessor){
+        super.accessor = accessor;
+        this._finalizeButton.setAttribute('onclick', `${this._accessor}.finalize()`);
+    }
 }
 //Global variables
 
@@ -1141,9 +1219,12 @@ function outputCode() {
             let resultHead = document.getElementById('resultHead');
             let resultBody = document.getElementById('resultBody');
             resultHead.innerHTML = '${result.text}';
-            resultHead.style.fontSize =  '${result.textSize}';
-            resultHead.style.fontFamily = '${result.textFont}';
-            resultHead.style.color = '${result.textColor}';
+            resultHead.style.fontSize =  '${result.size}';
+            resultHead.style.fontFamily = '${result.font}';
+            resultHead.style.color = '${result.color}';
+            resultHead.style.fontWeight = '${result.bold}';
+            resultHead.style.fontStyle = '${result.italic}';
+            resultHead.style.textDecoration = '${result.underline}';
             resultBody.innerHTML = '${result.detail}';
             resultBody.style.fontSize = '${result.detailSize}';
             resultBody.style.fontFamily = '${result.detailFont}';
@@ -1161,9 +1242,9 @@ function outputCode() {
         let question = questions[i];
         let header = document.createElement('h1');
         header.innerHTML = question.text;
-        header.style.fontSize = question.textSize;
-        header.style.fontFamily = question.textFont;
-        header.style.color = question.textColor;
+        header.style.fontSize = question.size;
+        header.style.fontFamily = question.font;
+        header.style.color = question.color;
         header.style.fontWeight = question.bold;
         header.style.fontStyle = question.italic;
         header.style.textDecoration = question.underline;
@@ -1176,9 +1257,9 @@ function outputCode() {
             let button = document.createElement('button');
             button.setAttribute('type', 'button');
             button.setAttribute('onclick', `setScore(${i}, ${option.value})`);
-            button.style.fontSize = option.textSize;
-            button.style.fontFamily = option.textFont;
-            button.style.color = option.textColor;
+            button.style.fontSize = option.size;
+            button.style.fontFamily = option.font;
+            button.style.color = option.color;
             button.style.fontWeight = option.bold;
             button.style.fontStyle = option.italic;
             button.style.textDecoration = option.underline;
