@@ -108,11 +108,9 @@ select{
 }
 #popup{
     background-color: white;
-    height: 60vh;
     position:fixed;
     top: 50vh;
     left: 50vw;
-    margin-top: -23vh;
     border-radius: 5%;
     padding: 10px 10px 10px 10px;
 
@@ -128,23 +126,20 @@ select{
 }
 #popupContent{
     position: relative;
-    height:58vh;
     left:1vw;
 }
 .interfaceContent{
-    height:58vh;
     position: relative;
     float: left;
     display: flex;
     flex-direction: column;
 }
 .exampleContent{
-    height:58vh;
     float:right;
 }
 .exampleButton{
     position: relative;
-    top:29vh;
+    top:34vh;
 }
 .finalizeButton{
     position: absolute;

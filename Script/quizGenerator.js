@@ -607,7 +607,6 @@ class StyleProperty extends PropertyBar{
             this._buttonStyle = new ButtonPopup(`${this._id}ButtonStyle`, 'Option Button Style', this._parent, 'buttonStyle', 'globalOption');
             this._styleDiv.appendChild(this._questionTextStyle.div);
         }else if(this._parent.type == "resultButton"){
-            console.log("Created Button Style");
             this._buttonStyle = new ButtonPopup(`${this._id}`, 'Result Button Style', this._parent, 'buttonStyle', 'resultButton');
         }
         if((this._parent != null && this._parent.type == "question")||(this._parent == null)){ 
@@ -855,7 +854,6 @@ class PropertyPopup extends InputArea{
     }
 
     set accessor(accessor){
-        console.log("PropertyPopup " + accessor + this._id);
         this._accessor = accessor;
         if(this._parent != null){
             this._accessor = this._parent.globalLocation + "." + this._accessor;
@@ -878,6 +876,8 @@ class ButtonPopup extends PropertyPopup{
         this._borderColor = new SimpleInput(`${this._id}BorderColor`, "Border Color", 'color');
         this._borderXRadius = new SimpleInput(`${this._id}BorderXRadius`, 'Border X Radius', 'range');
         this._borderYRadius = new SimpleInput(`${this._id}BorderYRadius`, 'Border Y Radius', 'range');
+        this._xMargins = new SimpleInput(`${this._id}XMargins`, 'X Margins', 'number');
+        this._yMargins = new SimpleInput(`${this._id}YMargins`, 'Y Margins', 'number');
         this._exampleContent = document.createElement('div');
         this._exampleButton = document.createElement('button');
         if(this._type == "questionOption" || this._type == "globalOption"){
@@ -891,6 +891,8 @@ class ButtonPopup extends PropertyPopup{
         this._borderColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderXRadius.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderYRadius.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._xMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._yMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         
         this._exampleButton.classList.add('exampleButton');
         this._exampleButton.style.textAlign = "";
@@ -912,6 +914,8 @@ class ButtonPopup extends PropertyPopup{
         this._borderXRadius.input.max = "50";
         this._borderYRadius.input.value = 0;
         this._borderYRadius.input.max = "50";
+        this._xMargins.value = 0;
+        this._yMargins.value = 0;
         this._exampleContent.classList.add('exampleContent');
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton.innerHTML = "Finalize Design?";
@@ -928,20 +932,26 @@ class ButtonPopup extends PropertyPopup{
         this._interfaceContent.appendChild(this._borderColor.div);
         this._interfaceContent.appendChild(this._borderXRadius.div);
         this._interfaceContent.appendChild(this._borderYRadius.div);
+        this._interfaceContent.appendChild(this._xMargins.div);
+        this._interfaceContent.appendChild(this._yMargins.div);
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._interfaceContent.appendChild(this._finalizeButton);
         }
         this._exampleContent.appendChild(this._exampleButton);
-        console.log("Created Button Style");
 
     }
 
     popup(){
         super.popup();
+        this._popupWindow.style.height = "70vh";
+        this._popupWindow.style.marginTop = "-28vh";
         this._popupWindow.style.width = "40vw";
         this._popupWindow.style.marginLeft = "-20vw";
+        this._popupContent.style.height = "68vh"
         this._popupContent.style.width = "38vw";
+        this._interfaceContent.style.height = "68vh";
         this._interfaceContent.style.width = "15vw";
+        this._exampleContent.style.height = "68vh";
         this._exampleContent.style.width = "20vw";
         this._popupContent.appendChild(this._exampleContent);
         this.updateButton();
@@ -1008,9 +1018,13 @@ class ButtonPopup extends PropertyPopup{
     get radius(){
         return `${this._borderXRadius.value}% / ${this._borderYRadius.value}%`;
     }
-    get style(){
-        return [this._width.value, this._height.value, this._buttonColor.value, this._borderStyle.value, this._borderWidth.value, this._borderColor.value, this._borderXRadius.value, this._borderYRadius.value];
+    get margin(){
+        return `${this._yMargins.value}px ${this._xMargins.value}px ${this._yMargins.value}px ${this._xMargins.value}px`;
     }
+    get style(){
+        return [this._width.value, this._height.value, this._buttonColor.value, this._borderStyle.value, this._borderWidth.value, this._borderColor.value, this._borderXRadius.value, this._borderYRadius.value, this._xMargins.value, this._yMargins.value];
+    }
+
     set style(style){
         this._width.value = style[0];
         this._height.value = style[1];
@@ -1020,6 +1034,8 @@ class ButtonPopup extends PropertyPopup{
         this._borderColor.value = style[5];
         this._borderXRadius.value = style[6];
         this._borderYRadius.value = style[7];
+        this._xMargins.value = style[8];
+        this._yMargins.value = style[9];
         this.updateButton();
         if(this._parent != null && this._parent.type == "question"){
             this.finalize(true);
@@ -1034,7 +1050,9 @@ class ButtonPopup extends PropertyPopup{
         this._borderWidth.id = this._id + "BorderWidth";
         this._borderColor.id = this._id + "BorderColor";
         this._borderXRadius.id = this._id + "BorderXRadius";
-        this._bordeYRadius.id = this._id + "BorderYRadius";
+        this._borderYRadius.id = this._id + "BorderYRadius";
+        this._xMargins.id = this._id + "XMargins";
+        this._yMargins.id = this._id + "YMargins";
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton.setAttribute('id', `${this._id}FinalizeButton`);
         }
@@ -1050,6 +1068,8 @@ class ButtonPopup extends PropertyPopup{
         this._borderColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderXRadius.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderYRadius.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._xMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._yMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton.setAttribute('onclick', `${this._accessor}.finalize()`);
         }
@@ -1103,9 +1123,13 @@ class TextPopup extends PropertyPopup{
 
     popup(){
         super.popup();
+        this._popupWindow.style.height = "60vh"
+        this._popupWindow.style.marginTop = "-23vh"
         this._popupWindow.style.width = "20vw";
         this._popupWindow.style.marginLeft = "-10vw";
+        this._popupContent.style.height = "58vh";
         this._popupContent.style.width = "18vw";
+        this._interfaceContent.style.height = "68vh";
         this._interfaceContent.style.width = "15vw";
     }
 
@@ -1376,6 +1400,7 @@ function outputCode() {
             button.style.backgroundColor = option.buttonStyle.color;
             button.style.border = option.buttonStyle.border;
             button.style.borderRadius = option.buttonStyle.radius;
+            button.style.margin = option.buttonStyle.margin;
             button.classList.add('quiz');
             button.innerHTML = option.text;
             form.appendChild(button);
@@ -1401,6 +1426,7 @@ function outputCode() {
     doneButton.style.backgroundColor = resultButton.buttonStyle.color;
     doneButton.style.border = resultButton.buttonStyle.border;
     doneButton.style.borderRadius = resultButton.buttonStyle.radius;
+    doneButton.style.margin = resultButton.buttonStyle.margin;
     body.appendChild(doneButton);
 
     let resultHead = document.createElement('h1');
@@ -1422,6 +1448,7 @@ function outputCode() {
     }
     
     output.innerHTML = previewText;
+    navigator.clipboard.writeText(output.innerHTML);
 }
 
 function showDevtools() {
