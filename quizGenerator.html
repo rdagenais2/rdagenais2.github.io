@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Quiz Generator</title>
-    <script src="Script/quizGenerator.js"></script>
+    <script src="Script/quizGenerator.js" defer></script>
     <link rel="stylesheet" href="Style/quizGenerator.css">
 </head>
 <body onload="onloadOps()">
@@ -28,9 +28,12 @@
             <button type="button" onclick="addQuestion()" class="addButton">Add Question</button>
             <div id="resultDiv"></div>
             <button type='button' onclick='addResult()' class="addButton">Add Result</button>
+            <div id="resultButtonDiv"></div>
         </div>
         <div id="outputDiv">
-            <button type="button" onclick="outputCode()" class="outputButton">Output Code</button>
+            <a href="#preview">
+                <button type="button" onclick="outputCode()" class="outputButton">Output Code</button>
+            </a>
             <xmp id="outputText"></xmp>
         </div>
         <div id="preview"></div>

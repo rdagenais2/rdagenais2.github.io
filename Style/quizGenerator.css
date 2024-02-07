@@ -2,140 +2,110 @@ html, body {
     margin: 0;
     height: 100%;
 }
-
 h1, h3, h4, label {
     font-family: arial,helvetica,sans-serif;
 }
-
 body{
     padding: 0px 0px 0px 0px;
     background-color: lightblue;
 }
-
 h3, h4{
     margin-top:0px;
 }
-
 label {
     display: block;
     margin-bottom: 3px;
 }
-
 button:not(.quiz, .styleButton, .exampleButton, .finalizeButton) {
     font-family: arial,helvetica,sans-serif;
     color: white;
     border-radius: 25px;
     border: none;
 }
-
 input [type='checkbox']{
     display: inline-block;
 }
-
 .propertyDiv{
     display: flex;
     flex-direction: row;
 }
-
 .dataDiv{
     margin-right: auto;
 }
-
 .styleDiv{
     margin-left: auto;
     order: 2;
 }
-
 .menuButton{
     margin-left:auto;
     margin-right:auto;
 }
-
 .option{
     margin-left: 25px;
 }
-
 .addButton{
     background-color: green;
 }
-
 .addButton:hover{
     background-color: lightgreen;
 }
-
 .removeButton{
     background-color: red;
 }
-
 .removeButton:hover{
     background-color: pink;
 }
-
 .outputButton{
     background-color: goldenrod;
 }
-
 .outputButton:hover{
     background-color: gold;
 }
-
 .devtool{
     background-color: black;
 }
-
 .devtool:hover{
     background-color: dimgrey;
 }
-
 .nav{
     background-color: black;
 }
-
 .nav:hover{
     background-color: dimgrey;
 }
-
 #exitButton{
     color: black !important;
     background-color: grey !important;
     float: left;
 }
-
 .styleButton{
     width: 170px;
     height: 21px;
 }
-
 .elementDiv{
     border: ridge;
     border-color: grey;
     padding: 10px 5px 10px 5px;
 }
-
 .inputArea{
     display: inline-block;
     margin: 10px 20px 10px 20px;
 }
-
 select{
     width: 170px;
     height: 21px;
 }
-
 .simpleInput[type='number'], .simpleInput[type='text'] {
     width: 170px;
     height: 15px;
 }
-
 .simpleInput[type='color'] {
     width: 100px;
     height: 21px;
 }
-
 .simpleInputDiv{
     vertical-align:top;
 }
-
 #popup{
     background-color: white;
     height: 60vh;
@@ -147,7 +117,6 @@ select{
     padding: 10px 10px 10px 10px;
 
 }
-
 #popupBackground{
     position:fixed;
     height:100%;
@@ -157,7 +126,6 @@ select{
     background-color: lightslategray;
     opacity:0.75;
 }
-
 #popupContent{
     border: solid;
     border-color: black;
@@ -165,7 +133,6 @@ select{
     height:58vh;
     left:1vw;
 }
-
 .interfaceContent{
     border: solid;
     border-color: black;
@@ -175,25 +142,21 @@ select{
     display: flex;
     flex-direction: column;
 }
-
 .exampleContent{
     border: solid;
     border-color:black;
     height:58vh;
     float:right;
 }
-
 .exampleButton{
     position: relative;
     top:29vh;
 }
-
 .finalizeButton{
     position: absolute;
     bottom:1vh;
     left:2vh;
 }
-
 #menu{
     position: fixed;
     background-color: cadetblue;
@@ -208,4 +171,3 @@ select{
 #body{
     padding: 0px 10px 0px 10px;
 }
-
