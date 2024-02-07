@@ -1326,19 +1326,38 @@ function outputCode() {
     let output = document.getElementById('outputText');
     let preview = document.getElementById('preview');
     preview.innerHTML = "";
+    let style = document.createElement('style');
     let script = document.createElement('script');
     let body = document.createElement('div');
     body.setAttribute('id', 'quizBody');
     body.style.display = "flex";
     body.style.flexDirection = "column";
+    preview.appendChild(style)
     preview.appendChild(script);
     preview.appendChild(body);
 
+    let styleContent = '';
+    styleContent += `
+    .selected{
+        outline: 2px solid blue;
+        outline-offset: -2px;
+    }
+    `;
+    style.innerHTML = styleContent;
+
     let scriptContent = '';
     scriptContent += `
-    var scores = [];
+    const scores = [];
+    const selected = Array(${questions.length}).fill(-1);
     function setScore(question, value){
         scores[question] = value;
+    }
+    function setSelected(question, option){
+        if(selected[question] != -1){
+            document.getElementById('question' + question + 'option' + selected[question]).classList.remove('selected');
+        }
+        document.getElementById('question' + question + 'option' + option).classList.add('selected');
+        selected[question] = option;
     }
     function finalScore(){
         let score = 0;
@@ -1391,7 +1410,8 @@ function outputCode() {
             let option = question.getOption(j);
             let button = document.createElement('button');
             button.setAttribute('type', 'button');
-            button.setAttribute('onclick', `setScore(${i}, ${option.value})`);
+            button.setAttribute('onclick', `setScore(${i}, ${option.value}); setSelected(${i}, ${j})`);
+            button.setAttribute('id', `question${i}option${j}`);
             button.style.fontSize = option.size;
             button.style.fontFamily = option.font;
             button.style.color = option.color;
@@ -1405,6 +1425,7 @@ function outputCode() {
             button.style.borderRadius = option.buttonStyle.radius;
             button.style.margin = option.buttonStyle.margin;
             button.classList.add('quiz');
+            button.classList.add('quizButton');
             button.innerHTML = option.text;
             form.appendChild(button);
         }
