@@ -1245,7 +1245,7 @@ function onloadOps(){
     buttonStyle = globalPropertyBar.buttonStyle;
 
     globalStyles.append(globalPropertyBar.div);
-    showDevtools();
+    //showDevtools();
 }
 
 function addQuestion() {

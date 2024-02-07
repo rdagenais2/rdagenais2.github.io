@@ -127,15 +127,11 @@ select{
     opacity:0.75;
 }
 #popupContent{
-    border: solid;
-    border-color: black;
     position: relative;
     height:58vh;
     left:1vw;
 }
 .interfaceContent{
-    border: solid;
-    border-color: black;
     height:58vh;
     position: relative;
     float: left;
@@ -143,8 +139,6 @@ select{
     flex-direction: column;
 }
 .exampleContent{
-    border: solid;
-    border-color:black;
     height:58vh;
     float:right;
 }
