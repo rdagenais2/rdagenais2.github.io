@@ -1,2 +1,1 @@
-1. Make buttons reactive (Semicomplete)
 3. Add images
