@@ -33,6 +33,9 @@ class QuizElement {
     setAttributes() {
         //base attributes
         this._header.innerHTML = `${this._type.charAt(0).toUpperCase() + this._type.slice(1)} ${this._num + 1}`;
+        if(this._type == "resultButton"){
+            this._header.innerHTML = `Result Button`;
+        }
         this._removeButton.setAttribute('type', 'button');
         this._removeButton.setAttribute('onclick', `remove${this._type.charAt(0).toUpperCase() + this._type.slice(1)}(${this._num})`);
         this._removeButton.innerHTML = `Remove ${this._type.charAt(0).toUpperCase() + this._type.slice(1)}`;
@@ -1129,7 +1132,7 @@ class TextPopup extends PropertyPopup{
         this._popupWindow.style.marginLeft = "-10vw";
         this._popupContent.style.height = "58vh";
         this._popupContent.style.width = "18vw";
-        this._interfaceContent.style.height = "68vh";
+        this._interfaceContent.style.height = "58vh";
         this._interfaceContent.style.width = "15vw";
     }
 
