@@ -170,6 +170,7 @@ class Question extends QuizElement{
         this.setIds();
         super.setAttributes();
         //base attributes
+        this._text.text = `Question ${this._num + 1} Heading`;
         this._text.size = '24';
         this._text.bold = true;
         this._optionButton.setAttribute('type', 'button');
@@ -257,7 +258,9 @@ class Option extends QuizElement {
 
     createElements() {
         super.createElements();
+        this._text.text = `Option ${this._num + 1}`;
         this._value = new NumberProperty(`${this._id}Value`, 'Value', this);
+        this._value.value = this._num;
     }
 
     setAttributes() {
@@ -317,6 +320,15 @@ class Result extends QuizElement{
         this._lower = new NumberProperty(`${this._id}Lower`, 'Lower Value', this);
         this._upper = new NumberProperty(`${this._id}Upper`, 'Upper Value', this);
         this._detail = new TextProperty(`${this._id}Detail`, 'Detail', 'textArea');
+        this._text.text = `Result ${this._num + 1} Heading`;
+        if(this._num == 0){
+            this._lower.value = 0;
+            this._upper.value = 0;
+        }else{
+            this._lower.value = results[this._num - 1].lower + 1;
+            this._upper.value = this._lower.value;
+        }
+        this._detail.text = `Result ${this._num + 1} Detail`;
     }
 
     setAttributes() {
@@ -325,8 +337,8 @@ class Result extends QuizElement{
         this._text.size = '32';
         this._detail.size = '16';
         this._text.bold = true;
-        this._lower.input.setAttribute('onchange', 'validateRanges()');
-        this._upper.input.setAttribute('onchange', 'validateRanges()');
+        this._lower.input.setAttribute('onchange', `validateRanges(${this._num}, 0)`);
+        this._upper.input.setAttribute('onchange', `validateRanges(${this._num}, 1)`);
     }
 
     setIds() {
@@ -708,6 +720,10 @@ class SimpleInput extends InputArea {
     attributes() {
         super.attributes();
         this._input.setAttribute('type', this._type);
+        if(this._input.type == "number"){
+            this._input.setAttribute('step', '1');
+            this._input.setAttribute('onchange', 'if(this.value == ""){this.value = "0"}; this.value = parseInt(this.value);');
+        }
         this._input.classList.add('simpleInput');
         this._div.classList.add(`${this._type}Input`);
         this._div.classList.add('simpleInputDiv');
@@ -716,6 +732,8 @@ class SimpleInput extends InputArea {
     get value() {
         if(this._type == "checkbox"){
             return this._input.checked;
+        }if(this._type == "number"){
+            return parseInt(this._input.value);
         }
         return this._input.value;
     }
@@ -881,6 +899,7 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius = new SimpleInput(`${this._id}BorderYRadius`, 'Border Y Radius', 'range');
         this._xMargins = new SimpleInput(`${this._id}XMargins`, 'X Margins', 'number');
         this._yMargins = new SimpleInput(`${this._id}YMargins`, 'Y Margins', 'number');
+        this._outlineColor = new SimpleInput(`${this._id}OutlineColor`, 'Outline Color', 'color');
         this._exampleContent = document.createElement('div');
         this._exampleButton = document.createElement('button');
         if(this._type == "questionOption" || this._type == "globalOption"){
@@ -896,9 +915,11 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._xMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._yMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._outlineColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         
         this._exampleButton.classList.add('exampleButton');
         this._exampleButton.style.textAlign = "";
+        this._exampleButton.style.outline = 'none';
         if(this._parent != null && (this._parent.type == "option" || this._parent.type == "resultButton")){
             this._exampleButton.innerHTML = this._parent.text;
             this._exampleButton.style.fontFamily = this._parent.textFont;
@@ -919,6 +940,7 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius.input.max = "50";
         this._xMargins.value = 0;
         this._yMargins.value = 0;
+        this._outlineColor.value = "#0000FF";
         this._exampleContent.classList.add('exampleContent');
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton.innerHTML = "Finalize Design?";
@@ -937,6 +959,7 @@ class ButtonPopup extends PropertyPopup{
         this._interfaceContent.appendChild(this._borderYRadius.div);
         this._interfaceContent.appendChild(this._xMargins.div);
         this._interfaceContent.appendChild(this._yMargins.div);
+        this._interfaceContent.appendChild(this._outlineColor.div);
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._interfaceContent.appendChild(this._finalizeButton);
         }
@@ -946,15 +969,15 @@ class ButtonPopup extends PropertyPopup{
 
     popup(){
         super.popup();
-        this._popupWindow.style.height = "75vh";
-        this._popupWindow.style.marginTop = "-30vh";
+        this._popupWindow.style.height = "80vh";
+        this._popupWindow.style.marginTop = "-40vh";
         this._popupWindow.style.width = "40vw";
         this._popupWindow.style.marginLeft = "-20vw";
         this._popupContent.style.height = "73vh"
         this._popupContent.style.width = "38vw";
-        this._interfaceContent.style.height = "73vh";
+        this._interfaceContent.style.height = "78vh";
         this._interfaceContent.style.width = "15vw";
-        this._exampleContent.style.height = "73vh";
+        this._exampleContent.style.height = "78vh";
         this._exampleContent.style.width = "20vw";
         this._popupContent.appendChild(this._exampleContent);
         this.updateButton();
@@ -974,6 +997,10 @@ class ButtonPopup extends PropertyPopup{
         this._exampleButton.style.marginTop = this._height.value * -0.5 +"px";
         this._exampleButton.style.left = "10vw";
         this._exampleButton.style.marginLeft = this._width.value * -0.5 + "px";
+        this._exampleButton.setAttribute('onclick', `if(this.style.outline == 'none'){this.style.outline = '${this.outline}'; this.style.outlineOffset = '${this.outlineOffset}';}else{this.style.outline = 'none';}`);
+        if(this._exampleButton.style.outline != 'none'){
+            this._exampleButton.style.outline = this.outline;
+        }
         if(this._parent != null && (this._parent.type == "option" || this._parent.type == "resultButton")){
             this._exampleButton.innerHTML = this._parent.text;
             this._exampleButton.style.fontFamily = this._parent.font;
@@ -1024,8 +1051,15 @@ class ButtonPopup extends PropertyPopup{
     get margin(){
         return `${this._yMargins.value}px ${this._xMargins.value}px ${this._yMargins.value}px ${this._xMargins.value}px`;
     }
+    get outline(){
+        return `${this._borderWidth.value}px solid ${this._outlineColor.value}`;
+    }
+    get outlineOffset(){
+        console.log(`${-1 * this._borderWidth.value}px`)
+        return `${-1 * this._borderWidth.value}px`;
+    }
     get style(){
-        return [this._width.value, this._height.value, this._buttonColor.value, this._borderStyle.value, this._borderWidth.value, this._borderColor.value, this._borderXRadius.value, this._borderYRadius.value, this._xMargins.value, this._yMargins.value];
+        return [this._width.value, this._height.value, this._buttonColor.value, this._borderStyle.value, this._borderWidth.value, this._borderColor.value, this._borderXRadius.value, this._borderYRadius.value, this._xMargins.value, this._yMargins.value, this._outlineColor.value];
     }
 
     set style(style){
@@ -1039,6 +1073,7 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius.value = style[7];
         this._xMargins.value = style[8];
         this._yMargins.value = style[9];
+        this._outlineColor.value = style[10];
         this.updateButton();
         if(this._parent != null && this._parent.type == "question"){
             this.finalize(true);
@@ -1056,6 +1091,7 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius.id = this._id + "BorderYRadius";
         this._xMargins.id = this._id + "XMargins";
         this._yMargins.id = this._id + "YMargins";
+        this._outlineColor = this._id + "OutlineColor";
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton.setAttribute('id', `${this._id}FinalizeButton`);
         }
@@ -1073,6 +1109,7 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._xMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._yMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._outlineColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton.setAttribute('onclick', `${this._accessor}.finalize()`);
         }
@@ -1127,7 +1164,7 @@ class TextPopup extends PropertyPopup{
     popup(){
         super.popup();
         this._popupWindow.style.height = "60vh"
-        this._popupWindow.style.marginTop = "-23vh"
+        this._popupWindow.style.marginTop = "-30vh"
         this._popupWindow.style.width = "20vw";
         this._popupWindow.style.marginLeft = "-10vw";
         this._popupContent.style.height = "58vh";
@@ -1303,20 +1340,38 @@ function removeResult(num) {
     }
 }
 
-function validateRanges(){
-    for(let i = 0; i < results.length; i++){
-        let current = results[i];
-        let currentLower = parseInt(current.lower);
-        let currentUpper = parseInt(current.upper);
-        if(currentLower > currentUpper){
-            current.upper = current.lower;
+function validateRanges(currentNum, side){
+    let current = results[currentNum];
+    if(side == 0 && current.lower > current.upper){
+        current.upper = current.lower;
+    }else if(side == 1 && current.lower > current.upper){
+        current.lower = current.upper;
+    }
+    if(currentNum > 0){
+        for(let i = currentNum; i > 0; i--){
+            let cur = results[i];
+            let prev = results[i-1];
+            if(prev.upper >= cur.lower){
+                prev.upper = cur.lower - 1;
+                if(prev.lower > prev.upper){
+                    prev.lower = prev.upper;
+                }
+            }else if(prev.upper < cur.lower - 1){
+                prev.upper = cur.lower - 1;
+            }
         }
-        if(i + 1 < results.length){
+    }
+    if(currentNum < resultNum - 1){
+        for(let i = currentNum; i < resultNum - 1; i++){
+            let cur = results[i];
             let next = results[i+1];
-            let nextLower = parseInt(next.lower);
-            let nextUpper = parseInt(next.upper);
-            if(current.upper >= next.lower){
-                next.lower = parseInt(next.lower) + 1;
+            if(next.lower <= cur.upper){
+                next.lower = cur.upper + 1;
+                if(next.upper < next.lower){
+                    next.upper = next.lower;
+                }
+            }else if(next.lower > cur.upper + 1){
+                next.lower = cur.upper + 1;
             }
         }
     }
@@ -1349,14 +1404,15 @@ function outputCode() {
     scriptContent += `
     const scores = [];
     const selected = Array(${questions.length}).fill(-1);
-    function setScore(question, value){
+    function setScore(question, value, style){
         scores[question] = value;
     }
-    function setSelected(question, option){
+    function setSelected(question, option, outline, outlineOffset){
         if(selected[question] != -1){
-            document.getElementById('question' + question + 'option' + selected[question]).classList.remove('selected');
+            document.getElementById('question' + question + 'option' + selected[question]).style.outline = 'none';
         }
-        document.getElementById('question' + question + 'option' + option).classList.add('selected');
+        document.getElementById('question' + question + 'option' + option).style.outline = outline;
+        document.getElementById('question' + question + 'option' + option).style.outlineOffset = outlineOffset;
         selected[question] = option;
     }
     function finalScore(){
@@ -1410,7 +1466,7 @@ function outputCode() {
             let option = question.getOption(j);
             let button = document.createElement('button');
             button.setAttribute('type', 'button');
-            button.setAttribute('onclick', `setScore(${i}, ${option.value}); setSelected(${i}, ${j})`);
+            button.setAttribute('onclick', `setScore(${i}, ${option.value}); setSelected(${i}, ${j}, '${option.buttonStyle.outline}', '${option.buttonStyle.outlineOffset}');`);
             button.setAttribute('id', `question${i}option${j}`);
             button.style.fontSize = option.size;
             button.style.fontFamily = option.font;

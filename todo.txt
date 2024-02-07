@@ -1,3 +1,1 @@
-1. Make buttons reactive
-2. Add error messages
 3. Add images
