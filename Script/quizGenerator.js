@@ -322,6 +322,8 @@ class Result extends QuizElement{
         this._text.size = '32';
         this._detail.size = '16';
         this._text.bold = true;
+        this._lower.input.setAttribute('onchange', 'validateRanges()');
+        this._upper.input.setAttribute('onchange', 'validateRanges()');
     }
 
     setIds() {
@@ -566,6 +568,9 @@ class NumberProperty extends PropertyBar{
         this._dataDiv.appendChild(this._data.div);
     }
 
+    get input(){
+        return this._data.input;
+    }
     get value(){
         return this._data.value;
     }
@@ -1268,6 +1273,25 @@ function removeResult(num) {
 
     for (let i = num; i < resultNum; i++) {
         results[i].num = i;
+    }
+}
+
+function validateRanges(){
+    for(let i = 0; i < results.length; i++){
+        let current = results[i];
+        let currentLower = parseInt(current.lower);
+        let currentUpper = parseInt(current.upper);
+        if(currentLower > currentUpper){
+            current.upper = current.lower;
+        }
+        if(i + 1 < results.length){
+            let next = results[i+1];
+            let nextLower = parseInt(next.lower);
+            let nextUpper = parseInt(next.upper);
+            if(current.upper >= next.lower){
+                next.lower = parseInt(next.lower) + 1;
+            }
+        }
     }
 }
 
