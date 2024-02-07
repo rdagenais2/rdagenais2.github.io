@@ -328,7 +328,7 @@ class Result extends QuizElement{
             this._lower.value = results[this._num - 1].lower + 1;
             this._upper.value = this._lower.value;
         }
-        this._detail.text = `Result ${1} Detail`;
+        this._detail.text = `Result ${this._num + 1} Detail`;
     }
 
     setAttributes() {
@@ -722,7 +722,7 @@ class SimpleInput extends InputArea {
         this._input.setAttribute('type', this._type);
         if(this._input.type == "number"){
             this._input.setAttribute('step', '1');
-            this._input.setAttribute('onchange', 'this.value = parseInt(this.value);');
+            this._input.setAttribute('onchange', 'if(this.value == ""){this.value = "0"}; this.value = parseInt(this.value);');
         }
         this._input.classList.add('simpleInput');
         this._div.classList.add(`${this._type}Input`);
@@ -732,6 +732,8 @@ class SimpleInput extends InputArea {
     get value() {
         if(this._type == "checkbox"){
             return this._input.checked;
+        }if(this._type == "number"){
+            return parseInt(this._input.value);
         }
         return this._input.value;
     }
