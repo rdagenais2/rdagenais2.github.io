@@ -1337,6 +1337,8 @@ function validateRanges(currentNum, side){
                 if(prev.lower > prev.upper){
                     prev.lower = prev.upper;
                 }
+            }else if(prev.upper < cur.lower - 1){
+                prev.upper = cur.lower - 1;
             }
         }
     }
@@ -1349,6 +1351,8 @@ function validateRanges(currentNum, side){
                 if(next.upper < next.lower){
                     next.upper = next.lower;
                 }
+            }else if(next.lower > cur.upper + 1){
+                next.lower = cur.upper + 1;
             }
         }
     }
