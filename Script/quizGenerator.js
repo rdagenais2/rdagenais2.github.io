@@ -258,7 +258,9 @@ class Option extends QuizElement {
 
     createElements() {
         super.createElements();
+        this._text.text = `Option ${this._num + 1}`;
         this._value = new NumberProperty(`${this._id}Value`, 'Value', this);
+        this._value.value = this._num;
     }
 
     setAttributes() {
@@ -318,6 +320,15 @@ class Result extends QuizElement{
         this._lower = new NumberProperty(`${this._id}Lower`, 'Lower Value', this);
         this._upper = new NumberProperty(`${this._id}Upper`, 'Upper Value', this);
         this._detail = new TextProperty(`${this._id}Detail`, 'Detail', 'textArea');
+        this._text.text = `Result ${this._num + 1} Heading`;
+        if(this._num == 0){
+            this._lower.value = 0;
+            this._upper.value = 0;
+        }else{
+            this._lower.value = results[this._num - 1].lower + 1;
+            this._upper.value = this._lower.value;
+        }
+        this._detail.text = `Result ${1} Detail`;
     }
 
     setAttributes() {
