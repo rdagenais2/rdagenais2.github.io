@@ -170,6 +170,7 @@ class Question extends QuizElement{
         this.setIds();
         super.setAttributes();
         //base attributes
+        this._text.text = `Question ${this._num + 1} Heading`;
         this._text.size = '24';
         this._text.bold = true;
         this._optionButton.setAttribute('type', 'button');
@@ -708,6 +709,10 @@ class SimpleInput extends InputArea {
     attributes() {
         super.attributes();
         this._input.setAttribute('type', this._type);
+        if(this._input.type == "number"){
+            this._input.setAttribute('step', '1');
+            this._input.setAttribute('onchange', 'this.value = parseInt(this.value);');
+        }
         this._input.classList.add('simpleInput');
         this._div.classList.add(`${this._type}Input`);
         this._div.classList.add('simpleInputDiv');
