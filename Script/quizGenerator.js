@@ -170,6 +170,7 @@ class Question extends QuizElement{
         this.setIds();
         super.setAttributes();
         //base attributes
+        this._text.text = `Question ${this._num + 1} Heading`;
         this._text.size = '24';
         this._text.bold = true;
         this._optionButton.setAttribute('type', 'button');
@@ -257,7 +258,9 @@ class Option extends QuizElement {
 
     createElements() {
         super.createElements();
+        this._text.text = `Option ${this._num + 1}`;
         this._value = new NumberProperty(`${this._id}Value`, 'Value', this);
+        this._value.value = this._num;
     }
 
     setAttributes() {
@@ -317,6 +320,15 @@ class Result extends QuizElement{
         this._lower = new NumberProperty(`${this._id}Lower`, 'Lower Value', this);
         this._upper = new NumberProperty(`${this._id}Upper`, 'Upper Value', this);
         this._detail = new TextProperty(`${this._id}Detail`, 'Detail', 'textArea');
+        this._text.text = `Result ${this._num + 1} Heading`;
+        if(this._num == 0){
+            this._lower.value = 0;
+            this._upper.value = 0;
+        }else{
+            this._lower.value = results[this._num - 1].lower + 1;
+            this._upper.value = this._lower.value;
+        }
+        this._detail.text = `Result ${this._num + 1} Detail`;
     }
 
     setAttributes() {
@@ -325,8 +337,8 @@ class Result extends QuizElement{
         this._text.size = '32';
         this._detail.size = '16';
         this._text.bold = true;
-        this._lower.input.setAttribute('onchange', 'validateRanges()');
-        this._upper.input.setAttribute('onchange', 'validateRanges()');
+        this._lower.input.setAttribute('onchange', `validateRanges(${this._num}, 0)`);
+        this._upper.input.setAttribute('onchange', `validateRanges(${this._num}, 1)`);
     }
 
     setIds() {
@@ -708,6 +720,10 @@ class SimpleInput extends InputArea {
     attributes() {
         super.attributes();
         this._input.setAttribute('type', this._type);
+        if(this._input.type == "number"){
+            this._input.setAttribute('step', '1');
+            this._input.setAttribute('onchange', 'if(this.value == ""){this.value = "0"}; this.value = parseInt(this.value);');
+        }
         this._input.classList.add('simpleInput');
         this._div.classList.add(`${this._type}Input`);
         this._div.classList.add('simpleInputDiv');
@@ -716,6 +732,8 @@ class SimpleInput extends InputArea {
     get value() {
         if(this._type == "checkbox"){
             return this._input.checked;
+        }if(this._type == "number"){
+            return parseInt(this._input.value);
         }
         return this._input.value;
     }
@@ -1303,20 +1321,38 @@ function removeResult(num) {
     }
 }
 
-function validateRanges(){
-    for(let i = 0; i < results.length; i++){
-        let current = results[i];
-        let currentLower = parseInt(current.lower);
-        let currentUpper = parseInt(current.upper);
-        if(currentLower > currentUpper){
-            current.upper = current.lower;
+function validateRanges(currentNum, side){
+    let current = results[currentNum];
+    if(side == 0 && current.lower > current.upper){
+        current.upper = current.lower;
+    }else if(side == 1 && current.lower > current.upper){
+        current.lower = current.upper;
+    }
+    if(currentNum > 0){
+        for(let i = currentNum; i > 0; i--){
+            let cur = results[i];
+            let prev = results[i-1];
+            if(prev.upper >= cur.lower){
+                prev.upper = cur.lower - 1;
+                if(prev.lower > prev.upper){
+                    prev.lower = prev.upper;
+                }
+            }else if(prev.upper < cur.lower - 1){
+                prev.upper = cur.lower - 1;
+            }
         }
-        if(i + 1 < results.length){
+    }
+    if(currentNum < resultNum - 1){
+        for(let i = currentNum; i < resultNum - 1; i++){
+            let cur = results[i];
             let next = results[i+1];
-            let nextLower = parseInt(next.lower);
-            let nextUpper = parseInt(next.upper);
-            if(current.upper >= next.lower){
-                next.lower = parseInt(next.lower) + 1;
+            if(next.lower <= cur.upper){
+                next.lower = cur.upper + 1;
+                if(next.upper < next.lower){
+                    next.upper = next.lower;
+                }
+            }else if(next.lower > cur.upper + 1){
+                next.lower = cur.upper + 1;
             }
         }
     }
