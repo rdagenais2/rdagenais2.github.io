@@ -337,8 +337,8 @@ class Result extends QuizElement{
         this._text.size = '32';
         this._detail.size = '16';
         this._text.bold = true;
-        this._lower.input.setAttribute('onchange', 'validateRanges()');
-        this._upper.input.setAttribute('onchange', 'validateRanges()');
+        this._lower.input.setAttribute('onchange', `validateRanges(${this._num}, 0)`);
+        this._upper.input.setAttribute('onchange', `validateRanges(${this._num}, 1)`);
     }
 
     setIds() {
@@ -1321,20 +1321,34 @@ function removeResult(num) {
     }
 }
 
-function validateRanges(){
-    for(let i = 0; i < results.length; i++){
-        let current = results[i];
-        let currentLower = parseInt(current.lower);
-        let currentUpper = parseInt(current.upper);
-        if(currentLower > currentUpper){
-            current.upper = current.lower;
+function validateRanges(currentNum, side){
+    let current = results[currentNum];
+    if(side == 0 && current.lower > current.upper){
+        current.upper = current.lower;
+    }else if(side == 1 && current.lower > current.upper){
+        current.lower = current.upper;
+    }
+    if(currentNum > 0){
+        for(let i = currentNum; i > 0; i--){
+            let cur = results[i];
+            let prev = results[i-1];
+            if(prev.upper >= cur.lower){
+                prev.upper = cur.lower - 1;
+                if(prev.lower > prev.upper){
+                    prev.lower = prev.upper;
+                }
+            }
         }
-        if(i + 1 < results.length){
+    }
+    if(currentNum < resultNum - 1){
+        for(let i = currentNum; i < resultNum - 1; i++){
+            let cur = results[i];
             let next = results[i+1];
-            let nextLower = parseInt(next.lower);
-            let nextUpper = parseInt(next.upper);
-            if(current.upper >= next.lower){
-                next.lower = parseInt(next.lower) + 1;
+            if(next.lower <= cur.upper){
+                next.lower = cur.upper + 1;
+                if(next.upper < next.lower){
+                    next.upper = next.lower;
+                }
             }
         }
     }
