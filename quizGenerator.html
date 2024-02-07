@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz Generator</title>
+    <script src="Script/quizGenerator.js" defer></script>
+    <link rel="stylesheet" href="Style/quizGenerator.css">
+</head>
+<body onload="onloadOps()">
+    <div id="menu">
+        <a href="index.html" class="menuButton">
+            <button type="button"  class="nav">Home</button>
+        </a>
+    </div>
+    <div id="header">
+        <h1 id="pageHeader">Quiz Generator</h1>
+    </div>
+    <div id="body">
+        <div id="popupBackground" style="display:none;"></div>
+        <div id="popup" style="display:none;">
+            <button onclick="" id="exitButton">X</button>
+            <div id="popupContent">
+            </div>
+        </div>
+        <div id="interface">
+            <div id="globalStyleDiv">
+            </div>
+            <div id="questionDiv"></div>
+            <button type="button" onclick="addQuestion()" class="addButton">Add Question</button>
+            <div id="resultDiv"></div>
+            <button type='button' onclick='addResult()' class="addButton">Add Result</button>
+            <div id="resultButtonDiv"></div>
+        </div>
+        <div id="outputDiv">
+            <a href="#preview">
+                <button type="button" onclick="outputCode()" class="outputButton">Output Code</button>
+            </a>
+            <xmp id="outputText"></xmp>
+        </div>
+        <div id="preview"></div>
+        <div id="devtools" style="visibility: hidden;">
+            <button type="button" onclick="displayData()" class="devtool">Show Data</button>
+            <button type="button" onclick="autofill()" class="devtool">Autofill</button>
+            <button type="button" onclick="autofill(); outputCode()" class="devtool">Auto Output</button>
+        </div>
+    </div>
+</body>
+</html>
