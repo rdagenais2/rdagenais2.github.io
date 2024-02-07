@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Script",
+    "\\Style"
   ],
-  "SelectedNode": "\\quizGenerator.html",
+  "SelectedNode": "\\README.md",
   "PreviewInSolutionExplorer": false
 }
