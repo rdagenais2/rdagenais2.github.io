@@ -943,15 +943,15 @@ class ButtonPopup extends PropertyPopup{
 
     popup(){
         super.popup();
-        this._popupWindow.style.height = "70vh";
-        this._popupWindow.style.marginTop = "-28vh";
+        this._popupWindow.style.height = "75vh";
+        this._popupWindow.style.marginTop = "-30vh";
         this._popupWindow.style.width = "40vw";
         this._popupWindow.style.marginLeft = "-20vw";
-        this._popupContent.style.height = "68vh"
+        this._popupContent.style.height = "73vh"
         this._popupContent.style.width = "38vw";
-        this._interfaceContent.style.height = "68vh";
+        this._interfaceContent.style.height = "73vh";
         this._interfaceContent.style.width = "15vw";
-        this._exampleContent.style.height = "68vh";
+        this._exampleContent.style.height = "73vh";
         this._exampleContent.style.width = "20vw";
         this._popupContent.appendChild(this._exampleContent);
         this.updateButton();
