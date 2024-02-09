@@ -77,6 +77,9 @@ class QuizElement {
     get size() {
         return this._text.size + 'px';
     }
+    get rawSize(){
+        return this._text.size;
+    }
     get font() {
         return this._text.font;
     }
@@ -871,9 +874,12 @@ class ButtonPopup extends PropertyPopup{
         super(id, text, parent, accessor);
         this._type = type;
 
+        this._textPosition = new DropdownInput(`${this._id}TextPosition`, 'Text Position', ['center', 'top', 'bottom']);
+        this._textOffset = new SimpleInput(`${this._id}TextOffset`, 'Text Offset', 'number');
         this._width = new SimpleInput(`${this._id}Width`, 'Button Width', 'number');
         this._height = new SimpleInput(`${this._id}Height`, 'Button Height', 'number');
         this._buttonColor = new SimpleInput(`${this._id}ButtonColor`, 'Button Color', 'color');
+        this._backgroundImage = new SimpleInput(`${this._id}Image`, "Background Image", 'text');
         this._borderStyle = new DropdownInput(`${this._id}BorderStyle`, 'Border Style', ['none', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge']);
         this._borderWidth = new SimpleInput(`${this._id}BorderWidth`, 'Border Width', 'number');
         this._borderColor = new SimpleInput(`${this._id}BorderColor`, "Border Color", 'color');
@@ -883,12 +889,17 @@ class ButtonPopup extends PropertyPopup{
         this._yMargins = new SimpleInput(`${this._id}YMargins`, 'Y Margins', 'number');
         this._exampleContent = document.createElement('div');
         this._exampleButton = document.createElement('button');
+        this._exampleText = document.createElement('p');
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton = document.createElement('button');
         }
+
+        this._textPosition.input.setAttribute('onchange', `${this._accessor}.updateButton()`);
+        this._textOffset.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._width.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._height.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._buttonColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._backgroundImage.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderStyle.input.setAttribute('onchange', `${this._accessor}.updateButton()`);
         this._borderWidth.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
@@ -899,14 +910,16 @@ class ButtonPopup extends PropertyPopup{
         
         this._exampleButton.classList.add('exampleButton');
         this._exampleButton.style.textAlign = "";
-        if(this._parent != null && (this._parent.type == "option" || this._parent.type == "resultButton")){
-            this._exampleButton.innerHTML = this._parent.text;
-            this._exampleButton.style.fontFamily = this._parent.textFont;
-            this._exampleButton.style.fontSize = this._parent.textSize;
-            this._exampleButton.style.color = this._parent.textColor;
-        }else{
-            this._exampleButton.innerHTML = "EXAMPLE";
-        }
+
+        this._exampleButton.style.outline = 'none';
+        this._exampleButton.style.backgroundSize = "cover";
+        this._exampleButton.style.backgroundPosition = "center";
+        this._exampleText.innerHTML = "EXAMPLE";
+        this._exampleText.style.position = "absolute";
+        this._exampleText.style.whiteSpace = "nowrap";
+        this._textPosition.value = 'center';
+        this._textOffset.value = 0;
+
         this._width.value = 100;
         this._height.value = 50;
         this._buttonColor.value = "#FFFFFF";
@@ -914,9 +927,9 @@ class ButtonPopup extends PropertyPopup{
         this._borderWidth.value = 1;
         this._borderColor.value = "#000000";
         this._borderXRadius.input.value = 0;
-        this._borderXRadius.input.max = "50";
+        this._borderXRadius.input.max = 50;
         this._borderYRadius.input.value = 0;
-        this._borderYRadius.input.max = "50";
+        this._borderYRadius.input.max = 50;
         this._xMargins.value = 0;
         this._yMargins.value = 0;
         this._exampleContent.classList.add('exampleContent');
@@ -927,9 +940,12 @@ class ButtonPopup extends PropertyPopup{
             this._finalizeButton.setAttribute('id', `${this._id}FinalizeButton`);
         }
 
+        this._interfaceContent.appendChild(this._textPosition.div);
+        this._interfaceContent.appendChild(this._textOffset.div);
         this._interfaceContent.appendChild(this._height.div);
         this._interfaceContent.appendChild(this._width.div);
         this._interfaceContent.appendChild(this._buttonColor.div);
+        this._interfaceContent.appendChild(this._backgroundImage.div);
         this._interfaceContent.appendChild(this._borderStyle.div);
         this._interfaceContent.appendChild(this._borderWidth.div);
         this._interfaceContent.appendChild(this._borderColor.div);
@@ -941,20 +957,23 @@ class ButtonPopup extends PropertyPopup{
             this._interfaceContent.appendChild(this._finalizeButton);
         }
         this._exampleContent.appendChild(this._exampleButton);
+        this._exampleButton.appendChild(this._exampleText);
+        this.updateButton();
 
     }
 
     popup(){
         super.popup();
-        this._popupWindow.style.height = "75vh";
-        this._popupWindow.style.marginTop = "-30vh";
-        this._popupWindow.style.width = "40vw";
-        this._popupWindow.style.marginLeft = "-20vw";
+        this._popupWindow.style.height = "80vh";
+        this._popupWindow.style.marginTop = "-40vh";
+        this._popupWindow.style.width = "55vw";
+        this._popupWindow.style.marginLeft = "-27.5vw";
         this._popupContent.style.height = "73vh"
-        this._popupContent.style.width = "38vw";
-        this._interfaceContent.style.height = "73vh";
-        this._interfaceContent.style.width = "15vw";
-        this._exampleContent.style.height = "73vh";
+        this._popupContent.style.width = "53vw";
+        this._interfaceContent.style.height = "78vh";
+        this._interfaceContent.style.width = "30vw";
+        this._exampleContent.style.height = "78vh";
+
         this._exampleContent.style.width = "20vw";
         this._popupContent.appendChild(this._exampleContent);
         this.updateButton();
@@ -969,20 +988,49 @@ class ButtonPopup extends PropertyPopup{
         this._exampleButton.style.height = this.height;
         this._exampleButton.style.width = this.width;
         this._exampleButton.style.backgroundColor = this.color;
+
+        this._exampleButton.style.backgroundImage = `url(${this.imageSource})`;
+
         this._exampleButton.style.border = this.border;
         this._exampleButton.style.borderRadius = this.radius;
         this._exampleButton.style.marginTop = this._height.value * -0.5 +"px";
         this._exampleButton.style.left = "10vw";
         this._exampleButton.style.marginLeft = this._width.value * -0.5 + "px";
         if(this._parent != null && (this._parent.type == "option" || this._parent.type == "resultButton")){
-            this._exampleButton.innerHTML = this._parent.text;
-            this._exampleButton.style.fontFamily = this._parent.font;
-            this._exampleButton.style.fontSize = this._parent.size;
-            this._exampleButton.style.color = this._parent.color;
-            this._exampleButton.style.fontWeight = this._parent.bold;
-            this._exampleButton.style.fontStyle = this._parent.italic;
-            this._exampleButton.style.textDecoration = this._parent.underline;
+            this._exampleText.innerHTML = this._parent.text;
+            this._exampleText.style.fontFamily = this._parent.font;
+            this._exampleText.style.fontSize = this._parent.size;
+            this._exampleText.style.color = this._parent.color;
+            this._exampleText.style.fontWeight = this._parent.bold;
+            this._exampleText.style.fontStyle = this._parent.italic;
+            this._exampleText.style.textDecoration = this._parent.underline;
         }
+        this.updateText();
+        
+    }
+
+    updateText(){
+        this._exampleText.style.margin = "0px 0px 0px 0px";
+        switch(this._textPosition.value){
+            case "center":
+                this._exampleText.style.top = `${this._height.value * 0.5}px`;
+                this._exampleText.style.marginTop = `${parseInt(-0.5 * getComputedStyle(this._exampleText).height.replace(/[^\d.-]/g, '')) - 1}px`;
+                break;
+            case "top":
+                this._exampleText.style.top = "0px";
+                this._exampleText.style.marginTop = `${parseInt(-1 * getComputedStyle(this._exampleText).height.replace(/[^\d.-]/g, '')) - (1+this._textOffset.value)}px`;
+                break;
+            case "bottom":
+                this._exampleText.style.top = `${this._height.value + this._textOffset.value}px`;
+                this._exampleText.style.marginTop = '0px';
+                break
+            default:
+                break;
+        }
+        
+        this._exampleText.style.left = `${this._width.value * 0.5}px`;
+        this._exampleText.style.marginLeft = `${parseInt(-0.5 * getComputedStyle(this._exampleText).width.replace(/[^\d.-]/g, '')) - 2}px`;
+        
     }
 
     finalize(auto = false){
@@ -1002,6 +1050,14 @@ class ButtonPopup extends PropertyPopup{
         }
     }
 
+
+
+    get textPosition(){
+        return this._textPosition.value;
+    }
+    get textDistance(){
+        return this._textOffset.value + "px";
+    }
     get width(){
         return this._width.value + "px";
     }
@@ -1010,6 +1066,9 @@ class ButtonPopup extends PropertyPopup{
     }
     get color(){
         return this._buttonColor.value;
+    }
+    get imageSource(){
+        return this._backgroundImage.value;
     }
     get border(){
         if(this._borderStyle.value == "none"){
@@ -1024,8 +1083,15 @@ class ButtonPopup extends PropertyPopup{
     get margin(){
         return `${this._yMargins.value}px ${this._xMargins.value}px ${this._yMargins.value}px ${this._xMargins.value}px`;
     }
+    get outline(){
+        return `${this._borderWidth.value}px solid ${this._outlineColor.value}`;
+    }
+    get outlineOffset(){
+        return `${-1 * this._borderWidth.value}px`;
+    }
     get style(){
-        return [this._width.value, this._height.value, this._buttonColor.value, this._borderStyle.value, this._borderWidth.value, this._borderColor.value, this._borderXRadius.value, this._borderYRadius.value, this._xMargins.value, this._yMargins.value];
+        return [this._width.value, this._height.value, this._buttonColor.value, this._borderStyle.value, this._borderWidth.value, this._borderColor.value, this._borderXRadius.value, this._borderYRadius.value, this._xMargins.value, this._yMargins.value, this._outlineColor.value, this._textPosition.value, this._textOffset.value, this._backgroundImage.value];
+
     }
 
     set style(style){
@@ -1039,6 +1105,11 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius.value = style[7];
         this._xMargins.value = style[8];
         this._yMargins.value = style[9];
+        this._outlineColor.value = style[10];
+        this._textPosition.value = style[11];
+        this._textOffset.value = style[12];
+        this._backgroundImage.value = style[13];
+
         this.updateButton();
         if(this._parent != null && this._parent.type == "question"){
             this.finalize(true);
@@ -1046,9 +1117,12 @@ class ButtonPopup extends PropertyPopup{
     }
     set id(id){
         super.id = id;
+        this._textPosition.id = this._id + "TextPosition";
+        this._textOffset.id = this._id + "TextOffset";
         this._width.id = this._id + "Width";
         this._height.id = this._id + "Height";
         this._buttonColor.id = this._id + "ButtonColor";
+        this._backgroundImage.id = this._id + "Image";
         this._borderStyle.id = this._id + "BorderStyle";
         this._borderWidth.id = this._id + "BorderWidth";
         this._borderColor.id = this._id + "BorderColor";
@@ -1063,9 +1137,12 @@ class ButtonPopup extends PropertyPopup{
     }
     set accessor(accessor){
         super.accessor = accessor;
+        this._textPosition.setAttribute('onchange', `${this._accessor}.updateButton()`);
+        this._textOffset.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._width.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._height.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._buttonColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._backgroundImage.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderStyle.input.setAttribute('onchange', `${this._accessor}.updateButton()`);
         this._borderWidth.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
@@ -1326,28 +1403,17 @@ function outputCode() {
     let output = document.getElementById('outputText');
     let preview = document.getElementById('preview');
     preview.innerHTML = "";
-    let style = document.createElement('style');
     let script = document.createElement('script');
     let body = document.createElement('div');
     body.setAttribute('id', 'quizBody');
     body.style.display = "flex";
     body.style.flexDirection = "column";
-    preview.appendChild(style)
     preview.appendChild(script);
     preview.appendChild(body);
 
-    let styleContent = '';
-    styleContent += `
-    .selected{
-        outline: 2px solid blue;
-        outline-offset: -2px;
-    }
-    `;
-    style.innerHTML = styleContent;
-
     let scriptContent = '';
     scriptContent += `
-    const scores = [];
+    const scores = Array(${questions.length}).fill(null);
     const selected = Array(${questions.length}).fill(-1);
     function setScore(question, value){
         scores[question] = value;
@@ -1362,6 +1428,9 @@ function outputCode() {
     function finalScore(){
         let score = 0;
         for(let i = 0; i < scores.length; i++){
+            if(scores[i] == null){
+                return -1;
+            }
             score += scores[i];
         }`;
     for (let i = 0; i < results.length; i++) {
@@ -1403,21 +1472,27 @@ function outputCode() {
         header.style.textDecoration = question.underline;
         let form = document.createElement('form');
         form.style.alignSelf = "center";
+        form.style.display = "flex";
+        form.style.flexDirection = "row";
         body.appendChild(header);
         body.appendChild(form);
 
         for (let j = 0; j < question.optionNum; j++) {
             let option = question.getOption(j);
+            let container = document.createElement('div');
             let button = document.createElement('button');
+            let text = document.createElement('p');
             button.setAttribute('type', 'button');
             button.setAttribute('onclick', `setScore(${i}, ${option.value}); setSelected(${i}, ${j})`);
             button.setAttribute('id', `question${i}option${j}`);
-            button.style.fontSize = option.size;
-            button.style.fontFamily = option.font;
-            button.style.color = option.color;
-            button.style.fontWeight = option.bold;
-            button.style.fontStyle = option.italic;
-            button.style.textDecoration = option.underline;
+            text.style.textAlign = "center";
+
+            text.style.fontSize = option.size;
+            text.style.fontFamily = option.font;
+            text.style.color = option.color;
+            text.style.fontWeight = option.bold;
+            text.style.fontStyle = option.italic;
+            text.style.textDecoration = option.underline;
             button.style.height = option.buttonStyle.height;
             button.style.width = option.buttonStyle.width;
             button.style.backgroundColor = option.buttonStyle.color;
@@ -1426,32 +1501,87 @@ function outputCode() {
             button.style.margin = option.buttonStyle.margin;
             button.classList.add('quiz');
             button.classList.add('quizButton');
-            button.innerHTML = option.text;
-            form.appendChild(button);
+            text.innerHTML = option.text;
+            form.appendChild(container);
+            
+           
+            switch(option.buttonStyle.textPosition){
+                case "center":
+                    container.appendChild(button);
+                    button.appendChild(text);
+                    break;
+                case "top":
+                    container.appendChild(text);
+                    container.appendChild(button);
+                    text.style.marginBottom = option.buttonStyle.textDistance;
+                    break;
+                case "bottom":
+                    container.appendChild(button);
+                    container.appendChild(text);
+                    text.style.marginTop = option.buttonStyle.textDistance;
+                    break;
+                default:
+                    break;
+            }
+            if(option.buttonStyle.imageSource != ''){
+                button.style.backgroundImage = `url(${option.buttonStyle.imageSource})`;
+                button.style.backgroundSize = "cover";
+                button.style.backgroundPosition = "center";
+            }
+            
         }
 
     }
 
+    let doneContainer = document.createElement('div');
     let doneButton = document.createElement('button');
+    let doneText = document.createElement('p');
     doneButton.setAttribute('type', 'button');
-    doneButton.innerHTML = 'Get Result';
     doneButton.setAttribute('onclick', 'finalScore()');
     doneButton.classList.add('quiz');
-    doneButton.style.alignSelf = "center";
-    doneButton.innerHTML = resultButton.text;
-    doneButton.style.fontSize = resultButton.size;
-    doneButton.style.fontFamily = resultButton.font;
-    doneButton.style.color = resultButton.color;
-    doneButton.style.fontWeight = resultButton.bold;
-    doneButton.style.fontStyle = resultButton.italic;
-    doneButton.style.textDecoration = resultButton.underline;
+    doneText.style.textAlign = 'center';
+
+    doneContainer.style.alignSelf = "center";
+    doneText.innerHTML = resultButton.text;
+    doneText.style.fontSize = resultButton.size;
+    doneText.style.fontFamily = resultButton.font;
+    doneText.style.color = resultButton.color;
+    doneText.style.fontWeight = resultButton.bold;
+    doneText.style.fontStyle = resultButton.italic;
+    doneText.style.textDecoration = resultButton.underline;
     doneButton.style.height = resultButton.buttonStyle.height;
     doneButton.style.width = resultButton.buttonStyle.width;
     doneButton.style.backgroundColor = resultButton.buttonStyle.color;
     doneButton.style.border = resultButton.buttonStyle.border;
     doneButton.style.borderRadius = resultButton.buttonStyle.radius;
     doneButton.style.margin = resultButton.buttonStyle.margin;
-    body.appendChild(doneButton);
+    body.appendChild(doneContainer);
+    
+    switch(resultButton.buttonStyle.textPosition){
+        case "center":
+            doneContainer.appendChild(doneButton);
+            doneButton.appendChild(doneText);
+            break;
+        case "top":
+            doneContainer.appendChild(doneText);
+            doneContainer.appendChild(doneButton);
+            doneText.style.marginBottom = resultButton.buttonStyle.textDistance;
+            break;
+        case "bottom":
+            doneContainer.appendChild(doneButton);
+            doneContainer.appendChild(doneText);
+            doneText.style.marginTop = resultButton.buttonStyle.textDistance;
+            break;
+        default:
+            break;
+    }
+
+    if(resultButton.buttonStyle.imageSource != ''){
+        doneButton.style.backgroundImage = `url(${resultButton.buttonStyle.imageSource})`;
+        doneButton.style.backgroundSize = "cover";
+        doneButton.style.backgroundPosition = "center";
+    }
+
 
     let resultHead = document.createElement('h1');
     let resultBody = document.createElement('p');
