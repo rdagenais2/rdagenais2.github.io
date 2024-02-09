@@ -897,6 +897,7 @@ class ButtonPopup extends PropertyPopup{
         this._width = new SimpleInput(`${this._id}Width`, 'Button Width', 'number');
         this._height = new SimpleInput(`${this._id}Height`, 'Button Height', 'number');
         this._buttonColor = new SimpleInput(`${this._id}ButtonColor`, 'Button Color', 'color');
+        this._backgroundImage = new SimpleInput(`${this._id}Image`, "Background Image", 'text');
         this._borderStyle = new DropdownInput(`${this._id}BorderStyle`, 'Border Style', ['none', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge']);
         this._borderWidth = new SimpleInput(`${this._id}BorderWidth`, 'Border Width', 'number');
         this._borderColor = new SimpleInput(`${this._id}BorderColor`, "Border Color", 'color');
@@ -906,7 +907,9 @@ class ButtonPopup extends PropertyPopup{
         this._yMargins = new SimpleInput(`${this._id}YMargins`, 'Y Margins', 'number');
         this._outlineColor = new SimpleInput(`${this._id}OutlineColor`, 'Outline Color', 'color');
         this._exampleContent = document.createElement('div');
+        this._exampleImageSpan = document.createElement('span');
         this._exampleButton = document.createElement('button');
+        this._exampleImage = document.createElement('img');
         this._exampleText = document.createElement('p');
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton = document.createElement('button');
@@ -917,6 +920,7 @@ class ButtonPopup extends PropertyPopup{
         this._width.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._height.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._buttonColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._backgroundImage.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderStyle.input.setAttribute('onchange', `${this._accessor}.updateButton()`);
         this._borderWidth.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
@@ -929,6 +933,8 @@ class ButtonPopup extends PropertyPopup{
         this._exampleButton.classList.add('exampleButton');
         this._exampleButton.style.textAlign = "";
         this._exampleButton.style.outline = 'none';
+        this._exampleImage.style.height = "100%";
+        this._exampleImage.style.width = "100%";
         this._exampleText.innerHTML = "EXAMPLE";
         this._exampleText.style.position = "absolute";
         this._exampleText.style.whiteSpace = "nowrap";
@@ -960,6 +966,7 @@ class ButtonPopup extends PropertyPopup{
         this._interfaceContent.appendChild(this._height.div);
         this._interfaceContent.appendChild(this._width.div);
         this._interfaceContent.appendChild(this._buttonColor.div);
+        this._interfaceContent.appendChild(this._backgroundImage.div);
         this._interfaceContent.appendChild(this._borderStyle.div);
         this._interfaceContent.appendChild(this._borderWidth.div);
         this._interfaceContent.appendChild(this._borderColor.div);
@@ -972,6 +979,8 @@ class ButtonPopup extends PropertyPopup{
             this._interfaceContent.appendChild(this._finalizeButton);
         }
         this._exampleContent.appendChild(this._exampleButton);
+        this._exampleButton.appendChild(this._exampleImageSpan);
+        this._exampleImageSpan.appendChild(this._exampleImage);
         this._exampleButton.appendChild(this._exampleText);
         this.updateButton();
 
@@ -1002,6 +1011,12 @@ class ButtonPopup extends PropertyPopup{
         this._exampleButton.style.height = this.height;
         this._exampleButton.style.width = this.width;
         this._exampleButton.style.backgroundColor = this.color;
+        this._exampleImage.src = this.imageSource;
+        if(this.imageSource == ""){
+            this._exampleImage.style.display = "none";
+        }else{
+            this._exampleImage.style.display = "inline";
+        }
         this._exampleButton.style.border = this.border;
         this._exampleButton.style.borderRadius = this.radius;
         this._exampleButton.style.marginTop = this._height.value * -0.5 +"px";
@@ -1082,6 +1097,9 @@ class ButtonPopup extends PropertyPopup{
     get color(){
         return this._buttonColor.value;
     }
+    get imageSource(){
+        return this._backgroundImage.value;
+    }
     get border(){
         if(this._borderStyle.value == "none"){
             return 'none';
@@ -1102,7 +1120,7 @@ class ButtonPopup extends PropertyPopup{
         return `${-1 * this._borderWidth.value}px`;
     }
     get style(){
-        return [this._width.value, this._height.value, this._buttonColor.value, this._borderStyle.value, this._borderWidth.value, this._borderColor.value, this._borderXRadius.value, this._borderYRadius.value, this._xMargins.value, this._yMargins.value, this._outlineColor.value, this._textPosition.value, this._textOffset.value];
+        return [this._width.value, this._height.value, this._buttonColor.value, this._borderStyle.value, this._borderWidth.value, this._borderColor.value, this._borderXRadius.value, this._borderYRadius.value, this._xMargins.value, this._yMargins.value, this._outlineColor.value, this._textPosition.value, this._textOffset.value, this._backgroundImage.value];
     }
 
     set style(style){
@@ -1119,6 +1137,7 @@ class ButtonPopup extends PropertyPopup{
         this._outlineColor.value = style[10];
         this._textPosition.value = style[11];
         this._textOffset.value = style[12];
+        this._backgroundImage.value = style[13];
         this.updateButton();
         if(this._parent != null && this._parent.type == "question"){
             this.finalize(true);
@@ -1131,6 +1150,7 @@ class ButtonPopup extends PropertyPopup{
         this._width.id = this._id + "Width";
         this._height.id = this._id + "Height";
         this._buttonColor.id = this._id + "ButtonColor";
+        this._backgroundImage.id = this._id + "Image";
         this._borderStyle.id = this._id + "BorderStyle";
         this._borderWidth.id = this._id + "BorderWidth";
         this._borderColor.id = this._id + "BorderColor";
@@ -1151,6 +1171,7 @@ class ButtonPopup extends PropertyPopup{
         this._width.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._height.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._buttonColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._backgroundImage.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderStyle.input.setAttribute('onchange', `${this._accessor}.updateButton()`);
         this._borderWidth.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._borderColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
@@ -1531,6 +1552,8 @@ function outputCode() {
             button.classList.add('quizButton');
             text.innerHTML = option.text;
             form.appendChild(container);
+            
+           
             switch(option.buttonStyle.textPosition){
                 case "center":
                     container.appendChild(button);
@@ -1549,6 +1572,11 @@ function outputCode() {
                 default:
                     break;
             }
+            if(option.buttonStyle.imageSource != ''){
+                button.style.backgroundImage = `url(${option.buttonStyle.imageSource})`;
+                button.style.backgroundSize = "100% 100%";
+            }
+            
         }
 
     }
@@ -1576,6 +1604,7 @@ function outputCode() {
     doneButton.style.borderRadius = resultButton.buttonStyle.radius;
     doneButton.style.margin = resultButton.buttonStyle.margin;
     body.appendChild(doneContainer);
+    
     switch(resultButton.buttonStyle.textPosition){
         case "center":
             doneContainer.appendChild(doneButton);
@@ -1593,6 +1622,11 @@ function outputCode() {
             break;
         default:
             break;
+    }
+
+    if(resultButton.buttonStyle.imageSource != ''){
+        doneButton.style.backgroundImage = `url(${resultButton.buttonStyle.imageSource})`;
+        doneButton.style.backgroundSize = "100% 100%";
     }
 
 
