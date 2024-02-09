@@ -907,9 +907,7 @@ class ButtonPopup extends PropertyPopup{
         this._yMargins = new SimpleInput(`${this._id}YMargins`, 'Y Margins', 'number');
         this._outlineColor = new SimpleInput(`${this._id}OutlineColor`, 'Outline Color', 'color');
         this._exampleContent = document.createElement('div');
-        this._exampleImageSpan = document.createElement('span');
         this._exampleButton = document.createElement('button');
-        this._exampleImage = document.createElement('img');
         this._exampleText = document.createElement('p');
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton = document.createElement('button');
@@ -933,8 +931,8 @@ class ButtonPopup extends PropertyPopup{
         this._exampleButton.classList.add('exampleButton');
         this._exampleButton.style.textAlign = "";
         this._exampleButton.style.outline = 'none';
-        this._exampleImage.style.height = "100%";
-        this._exampleImage.style.width = "100%";
+        this._exampleButton.style.backgroundSize = "cover";
+        this._exampleButton.style.backgroundPosition = "center";
         this._exampleText.innerHTML = "EXAMPLE";
         this._exampleText.style.position = "absolute";
         this._exampleText.style.whiteSpace = "nowrap";
@@ -979,8 +977,6 @@ class ButtonPopup extends PropertyPopup{
             this._interfaceContent.appendChild(this._finalizeButton);
         }
         this._exampleContent.appendChild(this._exampleButton);
-        this._exampleButton.appendChild(this._exampleImageSpan);
-        this._exampleImageSpan.appendChild(this._exampleImage);
         this._exampleButton.appendChild(this._exampleText);
         this.updateButton();
 
@@ -1011,12 +1007,9 @@ class ButtonPopup extends PropertyPopup{
         this._exampleButton.style.height = this.height;
         this._exampleButton.style.width = this.width;
         this._exampleButton.style.backgroundColor = this.color;
-        this._exampleImage.src = this.imageSource;
-        if(this.imageSource == ""){
-            this._exampleImage.style.display = "none";
-        }else{
-            this._exampleImage.style.display = "inline";
-        }
+
+        this._exampleButton.style.backgroundImage = `url(${this.imageSource})`;
+
         this._exampleButton.style.border = this.border;
         this._exampleButton.style.borderRadius = this.radius;
         this._exampleButton.style.marginTop = this._height.value * -0.5 +"px";
@@ -1574,7 +1567,8 @@ function outputCode() {
             }
             if(option.buttonStyle.imageSource != ''){
                 button.style.backgroundImage = `url(${option.buttonStyle.imageSource})`;
-                button.style.backgroundSize = "100% 100%";
+                button.style.backgroundSize = "cover";
+                button.style.backgroundPosition = "center";
             }
             
         }
@@ -1626,7 +1620,8 @@ function outputCode() {
 
     if(resultButton.buttonStyle.imageSource != ''){
         doneButton.style.backgroundImage = `url(${resultButton.buttonStyle.imageSource})`;
-        doneButton.style.backgroundSize = "100% 100%";
+        doneButton.style.backgroundSize = "cover";
+        doneButton.style.backgroundPosition = "center";
     }
 
 
