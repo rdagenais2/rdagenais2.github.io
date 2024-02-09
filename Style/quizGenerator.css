@@ -132,6 +132,7 @@ select{
     position: relative;
     float: left;
     display: flex;
+    flex-wrap: wrap;
     flex-direction: column;
 }
 .exampleContent{
@@ -139,7 +140,9 @@ select{
 }
 .exampleButton{
     position: relative;
-    top:34vh;
+    align-content: center;
+    top: 40vh;
+    padding: 0px;
 }
 .finalizeButton{
     position: absolute;
