@@ -310,6 +310,7 @@ class Option extends QuizElement {
 class Result extends QuizElement{
     constructor(num) {
         super(num, 'result');
+        this._quizType = false;
         this.createElements();
         this.setAttributes();
         this.appendChildren();
@@ -319,7 +320,9 @@ class Result extends QuizElement{
         super.createElements();
         this._lower = new NumberProperty(`${this._id}Lower`, 'Lower Value', this);
         this._upper = new NumberProperty(`${this._id}Upper`, 'Upper Value', this);
+        this._value = new NumberProperty(`${this._id}Value`, 'Value', this);
         this._detail = new TextProperty(`${this._id}Detail`, 'Detail', 'textArea');
+
     }
 
     setAttributes() {
@@ -351,6 +354,9 @@ class Result extends QuizElement{
     get upper() {
         return this._upper.value;
     }
+    get value(){
+        return this._value.value;
+    }
     get detail() {
         return this._detail.text;
     }
@@ -372,6 +378,9 @@ class Result extends QuizElement{
     get detailUnderline(){
         return this._detail.underline;
     }
+    get quizType(){
+        return this._quizType;
+    }
 
     //setters
 
@@ -380,6 +389,9 @@ class Result extends QuizElement{
     }
     set upper(upper) {
         this._upper.value = upper;
+    }
+    set value(value){
+        this._value.value = value;
     }
     set detail(detail) {
         this._detail.text = detail;
@@ -402,11 +414,25 @@ class Result extends QuizElement{
     set detailUnderline(underline){
         this._detail.underline = underline;
     }
+    set quizType(multi){
+        if(multi && !this._quizType){
+            this._quizType = multi;
+            this._form.removeChild(this._upper.div);
+            this._form.removeChild(this._lower.div);
+            this._form.insertBefore(this._value.div, this._detail.div);
+        }else if (!multi && this._quizType){
+            this._quizType = multi;
+            this._form.removeChild(this._value.div);
+            this._form.insertBefore(this._lower.div, this._detail.div);
+            this._form.insertBefore(this._upper.div, this._detail.div);
+        }
+    }
     setNum(num) {
         super.num = num;
         this._lower.id = `${this._id}Lower`;
         this._upper.id = `${this._id}Upper`;
         this._detail.id = `${this._id}Detail`;
+        this._value.id = `${this._id}Value`;
     }
 
     //update
@@ -611,6 +637,9 @@ class StyleProperty extends PropertyBar{
             this._resultTextStyle = new TextPopup(`${this._id}ResultTextStyle`, 'Result Text Style', this._parent, 'resultTextStyle', 'results');
             this._detailTextStyle = new TextPopup(`${this._id}DetailTextStyle`, 'Detail Text Style', this._parent, 'detailTextStyle', 'details');
             this._buttonStyle = new ButtonPopup(`${this._id}ButtonStyle`, 'Option Button Style', this._parent, 'buttonStyle', 'globalOption');
+            this._quizType = new SimpleInput(`${this._id}QuizType`, 'Multi-Result Quiz?', 'checkbox');
+            this._quizType.input.setAttribute('onchange', 'changeQuizType()');
+            this._styleDiv.appendChild(this._quizType.div);
             this._styleDiv.appendChild(this._questionTextStyle.div);
         }else if(this._parent.type == "resultButton"){
             this._buttonStyle = new ButtonPopup(`${this._id}`, 'Result Button Style', this._parent, 'buttonStyle', 'resultButton');
@@ -639,6 +668,9 @@ class StyleProperty extends PropertyBar{
     }
     get detailTextStyle(){
         return this._detailTextStyle;
+    }
+    get quizType(){
+        return this._quizType;
     }
 
     set id(id){
@@ -1335,13 +1367,14 @@ const questions = [];
 var questionNum = 0;
 const results = [];
 var resultNum = 0;
-var questionTextStyle, optionTextStyle, resultTextStyle, detailTextStyle, buttonStyle;
+var quizType, questionTextStyle, optionTextStyle, resultTextStyle, detailTextStyle, buttonStyle;
 var resultButton = new ResultButton();
 
 //Global functions
 function onloadOps(){
     let globalStyles = document.getElementById('globalStyleDiv');
     let globalPropertyBar = new StyleProperty("globalStyle");
+    quizType = globalPropertyBar.quizType
     questionTextStyle = globalPropertyBar.questionTextStyle;
     optionTextStyle = globalPropertyBar.optionTextStyle;
     resultTextStyle = globalPropertyBar.resultTextStyle;
@@ -1368,6 +1401,7 @@ function removeQuestion(num) {
 
 function addResult() {
     results.push(new Result(resultNum++));
+    results[resultNum - 1].quizType = quizType.value;
 }
 
 function removeResult(num) {
@@ -1399,6 +1433,13 @@ function validateRanges(){
     }
 }
 
+function changeQuizType(){
+    
+    for(let i = 0; i < resultNum; i++){
+        results[i].quizType = quizType.value;
+    }
+}
+
 function outputCode() {
     let output = document.getElementById('outputText');
     let preview = document.getElementById('preview');
@@ -1426,17 +1467,45 @@ function outputCode() {
         selected[question] = option;
     }
     function finalScore(){
-        let score = 0;
+    `
+    if(quizType.value){
+        scriptContent += `let scoreCounts = [];
+        for(let i = 0; i < scores.length; i++){
+            if(scores[i] == null){
+                return -1;
+            }
+            scoreCounts[scores[i]]++;
+        }
+        let score = -1;
+        let scoreCount = -1;
+        for(let i = 0; i < scoreCounts.length; i++){
+            if(scoreCounts[i] > scoreCount){
+                score = i;
+                scoreCount = scoreCounts[i];
+            }
+        }`;
+    }else{
+        scriptContent += `let score = 0;
         for(let i = 0; i < scores.length; i++){
             if(scores[i] == null){
                 return -1;
             }
             score += scores[i];
         }`;
+    }
+        
     for (let i = 0; i < results.length; i++) {
         let result = results[i];
+        if(quizType.value){
+            scriptContent += `
+            if(score == ${result.value}){
+            `;
+        }else{
+            scriptContent += `
+            if(score >= ${result.lower} && score <= ${result.upper}){
+            `;
+        }
         scriptContent += `
-        if(score >= ${result.lower} && score <= ${result.upper}){
             let resultHead = document.getElementById('resultHead');
             let resultBody = document.getElementById('resultBody');
             resultHead.innerHTML = '${result.text}';
@@ -1499,6 +1568,7 @@ function outputCode() {
             button.style.border = option.buttonStyle.border;
             button.style.borderRadius = option.buttonStyle.radius;
             button.style.margin = option.buttonStyle.margin;
+            button.style.outline = option.buttonStyle.outline;
             button.classList.add('quiz');
             button.classList.add('quizButton');
             text.innerHTML = option.text;
