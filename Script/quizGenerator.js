@@ -1481,7 +1481,7 @@ function outputCode() {
     function finalScore(){
     `
     if(quizType.value){
-        scriptContent += `let scoreCounts = [];
+        scriptContent += `let scoreCounts = Array(${results.length}).fill(0);
         for(let i = 0; i < scores.length; i++){
             if(scores[i] == null){
                 return -1;
