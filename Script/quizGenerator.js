@@ -328,11 +328,14 @@ class Result extends QuizElement{
     setAttributes() {
         super.setAttributes();
         this.setIds();
+        this._lower.value = 0;
+        this._upper.value = 0;
         this._text.size = '32';
         this._detail.size = '16';
         this._text.bold = true;
-        this._lower.input.setAttribute('onchange', 'validateRanges()');
-        this._upper.input.setAttribute('onchange', 'validateRanges()');
+        this._lower.input.setAttribute('onchange', `validateRanges(${this._num}, 0)`);
+        this._upper.input.setAttribute('onchange', `validateRanges(${this._num}, 1)`);
+        this._value.input.setAttribute('onchange', `validateRanges(${this._num}, 2)`);
     }
 
     setIds() {
@@ -349,10 +352,10 @@ class Result extends QuizElement{
     //getters
 
     get lower() {
-        return this._lower.value;
+        return parseInt(this._lower.value);
     }
     get upper() {
-        return this._upper.value;
+        return parseInt(this._upper.value);
     }
     get value(){
         return this._value.value;
@@ -743,6 +746,11 @@ class SimpleInput extends InputArea {
     attributes() {
         super.attributes();
         this._input.setAttribute('type', this._type);
+        if(this._input.type == "number"){
+            this._input.value = 0;
+            this._input.setAttribute('step', '1');
+            this._input.setAttribute('onchange', 'if(this.value == "" || this.value < 0){this.value = 0}; this.value = parseInt(this.value);');
+        }
         this._input.classList.add('simpleInput');
         this._div.classList.add(`${this._type}Input`);
         this._div.classList.add('simpleInputDiv');
@@ -752,6 +760,9 @@ class SimpleInput extends InputArea {
         if(this._type == "checkbox"){
             return this._input.checked;
         }
+        if(this._type == "number"){
+            return parseInt(this._input.value);
+        }
         return this._input.value;
     }
     get input(){
@@ -760,7 +771,10 @@ class SimpleInput extends InputArea {
     set value(value) {
         if(this._type == "checkbox"){
             this._input.checked = value;
+        }else if(this._type == "number"){
+            this._input.value = parseInt(value);
         }else{
+
             this._input.value = value;
         }
     }
@@ -1413,6 +1427,9 @@ function removeQuestion(num) {
 function addResult() {
     results.push(new Result(resultNum++));
     results[resultNum - 1].quizType = quizType.value;
+    if(results.length > 1){
+        validateRanges(results.length - 2, 1);
+    }
 }
 
 function removeResult(num) {
@@ -1425,21 +1442,54 @@ function removeResult(num) {
     }
 }
 
-function validateRanges(){
-    for(let i = 0; i < results.length; i++){
-        let current = results[i];
-        let currentLower = parseInt(current.lower);
-        let currentUpper = parseInt(current.upper);
-        if(currentLower > currentUpper){
-            current.upper = current.lower;
-        }
-        if(i + 1 < results.length){
-            let next = results[i+1];
-            let nextLower = parseInt(next.lower);
-            let nextUpper = parseInt(next.upper);
-            if(current.upper >= next.lower){
-                next.lower = parseInt(next.lower) + 1;
+function validateRanges(currentNum, side){
+    let current = results[currentNum];
+    if(side == 0 && current.lower > current.upper){
+        current.upper = current.lower;
+    }else if(side == 1 && current.lower > current.upper){
+        current.lower = current.upper;
+    }
+    if(currentNum > 0){
+        for(let i = currentNum; i > 0; i--){
+            let cur = results[i];
+            let prev = results[i-1];
+            if(prev.upper >= cur.lower){
+                prev.upper = cur.lower - 1;
+                if(prev.lower > prev.upper){
+                    prev.lower = prev.upper;
+                }
             }
+            if(cur.value <= prev.value){
+                prev.value = cur.value - 1;
+            }
+        }
+    }
+    if(currentNum < resultNum - 1){
+        for(let i = currentNum; i < resultNum - 1; i++){
+            let cur = results[i];
+            let next = results[i+1];
+            if(next.lower <= cur.upper){
+                next.lower = cur.upper + 1;
+                if(next.upper < next.lower){
+                    next.upper = next.lower;
+                }
+            }
+            if(cur.value >= next.value){
+                next.value = cur.value + 1;
+            }
+        }
+    }
+    for(let i = 0; i < results.length; i++){
+        let result = results[i];
+        if(result.lower < 0){
+            result.lower = 0;
+            validateRanges(i, 0);
+        }else if(result.upper < 0){
+            result.upper = 0;
+            validateRanges(i, 1);
+        }else if(result.value < 0){
+            result.value = 0;
+            validateRanges(i, 2);
         }
     }
 }
@@ -1465,8 +1515,8 @@ function outputCode() {
 
     let scriptContent = '';
     scriptContent += `
-    const scores = Array(${questions.length}).fill(null);
-    const selected = Array(${questions.length}).fill(-1);
+    var scores = Array(${questions.length}).fill(null);
+    var selected = Array(${questions.length}).fill(-1);
     function setScore(question, value){
         scores[question] = value;
     }
@@ -1709,11 +1759,11 @@ function autofill() {
         questions[i].addOption();
 
         questions[i].getOption(0).text = "Positive";
-        questions[i].getOption(0).value = 1;
+        questions[i].getOption(0).value = 2;
         questions[i].getOption(1).text = "Neutral";
-        questions[i].getOption(1).value = 0;
+        questions[i].getOption(1).value = 1;
         questions[i].getOption(2).text = "Negative";
-        questions[i].getOption(2).value = -1;
+        questions[i].getOption(2).value = 0;
     }
     addResult();
     addResult();
@@ -1721,14 +1771,14 @@ function autofill() {
 
     results[0].text = "Negative";
     results[0].detail = "You got a negative score";
-    results[0].lower = -3;
-    results[0].upper = -1;
+    results[0].lower = 0;
+    results[0].upper = 2;
     results[1].text = "Neutral";
     results[1].detail = "You got a neutral score";
-    results[1].lower = 0;
-    results[1].upper = 0;
+    results[1].lower = 3;
+    results[1].upper = 3;
     results[2].text = "Positive";
     results[2].detail = "You got a positive score";
-    results[2].lower = 1;
-    results[2].upper = 3;
+    results[2].lower = 4;
+    results[2].upper = 6;
 }
