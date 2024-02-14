@@ -919,6 +919,7 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius = new SimpleInput(`${this._id}BorderYRadius`, 'Border Y Radius', 'range');
         this._xMargins = new SimpleInput(`${this._id}XMargins`, 'X Margins', 'number');
         this._yMargins = new SimpleInput(`${this._id}YMargins`, 'Y Margins', 'number');
+        this._outlineColor = new SimpleInput(`${this._id}OutlineColor`, 'Outline Color', 'color');
         this._exampleContent = document.createElement('div');
         this._exampleButton = document.createElement('button');
         this._exampleText = document.createElement('p');
@@ -939,9 +940,11 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._xMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._yMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
-        
+        this._outlineColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+
         this._exampleButton.classList.add('exampleButton');
         this._exampleButton.style.textAlign = "";
+        this._exampleButton.style.outline = 'none';
 
         this._exampleButton.style.outline = 'none';
         this._exampleButton.style.backgroundSize = "cover";
@@ -964,6 +967,7 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius.input.max = 50;
         this._xMargins.value = 0;
         this._yMargins.value = 0;
+        this._outlineColor.value = "#0000FF";
         this._exampleContent.classList.add('exampleContent');
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton.innerHTML = "Finalize Design?";
@@ -985,6 +989,7 @@ class ButtonPopup extends PropertyPopup{
         this._interfaceContent.appendChild(this._borderYRadius.div);
         this._interfaceContent.appendChild(this._xMargins.div);
         this._interfaceContent.appendChild(this._yMargins.div);
+        this._interfaceContent.appendChild(this._outlineColor.div);
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._interfaceContent.appendChild(this._finalizeButton);
         }
@@ -1028,6 +1033,10 @@ class ButtonPopup extends PropertyPopup{
         this._exampleButton.style.marginTop = this._height.value * -0.5 +"px";
         this._exampleButton.style.left = "10vw";
         this._exampleButton.style.marginLeft = this._width.value * -0.5 + "px";
+        this._exampleButton.setAttribute('onclick', `if(this.style.outline == 'none'){this.style.outline = '${this.outline}'; this.style.outlineOffset = '${this.outlineOffset}';}else{this.style.outline = 'none';}`);
+        if(this._exampleButton.style.outline != 'none'){
+            this._exampleButton.style.outline = this.outline;
+        }
         if(this._parent != null && (this._parent.type == "option" || this._parent.type == "resultButton")){
             this._exampleText.innerHTML = this._parent.text;
             this._exampleText.style.fontFamily = this._parent.font;
@@ -1162,6 +1171,7 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius.id = this._id + "BorderYRadius";
         this._xMargins.id = this._id + "XMargins";
         this._yMargins.id = this._id + "YMargins";
+        this._outlineColor = this._id + "OutlineColor";
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton.setAttribute('id', `${this._id}FinalizeButton`);
         }
@@ -1182,6 +1192,7 @@ class ButtonPopup extends PropertyPopup{
         this._borderYRadius.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._xMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         this._yMargins.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
+        this._outlineColor.input.setAttribute('oninput', `${this._accessor}.updateButton()`);
         if(this._type == "questionOption" || this._type == "globalOption"){
             this._finalizeButton.setAttribute('onclick', `${this._accessor}.finalize()`);
         }
@@ -1459,11 +1470,12 @@ function outputCode() {
     function setScore(question, value){
         scores[question] = value;
     }
-    function setSelected(question, option){
+    function setSelected(question, option, outline, outlineOffset){
         if(selected[question] != -1){
-            document.getElementById('question' + question + 'option' + selected[question]).classList.remove('selected');
+            document.getElementById('question' + question + 'option' + selected[question]).style.outline = 'none';
         }
-        document.getElementById('question' + question + 'option' + option).classList.add('selected');
+        document.getElementById('question' + question + 'option' + option).style.outline = outline;
+        document.getElementById('question' + question + 'option' + option).style.outlineOffset = outlineOffset;
         selected[question] = option;
     }
     function finalScore(){
@@ -1552,7 +1564,7 @@ function outputCode() {
             let button = document.createElement('button');
             let text = document.createElement('p');
             button.setAttribute('type', 'button');
-            button.setAttribute('onclick', `setScore(${i}, ${option.value}); setSelected(${i}, ${j})`);
+            button.setAttribute('onclick', `setScore(${i}, ${option.value}); setSelected(${i}, ${j}, '${option.buttonStyle.outline}', '${option.buttonStyle.outlineOffset}')`);
             button.setAttribute('id', `question${i}option${j}`);
             text.style.textAlign = "center";
 
@@ -1568,7 +1580,6 @@ function outputCode() {
             button.style.border = option.buttonStyle.border;
             button.style.borderRadius = option.buttonStyle.radius;
             button.style.margin = option.buttonStyle.margin;
-            button.style.outline = option.buttonStyle.outline;
             button.classList.add('quiz');
             button.classList.add('quizButton');
             text.innerHTML = option.text;
